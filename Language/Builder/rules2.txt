@@ -1,0 +1,43 @@
+Program->
+Statements
+
+Statements-> 
+Statement Statements 
+
+Statement-> 
+Expression
+WhileLoop
+ForLoop
+
+WhileLoop-> 
+while ( Expression ) { Statements }
+
+ForLooop-> 
+for ( Expression ; Expression ; Expression ) { Statements }
+
+Expression->
+Value InfixOp Value
+
+Value->
+PrefixOp Value PostfixOp
+Variable
+Literal
+FunctionReturn
+
+FunctionReturn->
+new ClassName ( Arguments ) ;
+FunctionName ( Arguments ) ;
+new ClassName ( ) ;
+
+Literal->
+String
+Number
+null
+undefined
+
+Arguments->
+Arguments Argument
+Argument
+
+Argument->
+Expression
