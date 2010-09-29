@@ -8,18 +8,16 @@
 *
 *********************************************************************************/
 
-package Language.Execution {
-	public class StatementsNode {
-		private var Statements:ExecutionNode;
-		private var Statement:ExecutionNode;
-		public function StatementsNode(statement:ExecutionNode, statements:ExecutionNode = null){
-			Statements = statements;
-			Statement = statement;
-		}
-		//default implementation
-		public function run():Object{ 
-			if(Statements != null) Statements.run();
-			Statement.run();
+package Language.WhileLoop {
+	public class WhileLoopNode {
+		//return type, default void
+		private var returnType:int = 0;
+		private var children:Array;
+		
+		public function run():Object{
+			if(Boolean(Conditional.run())){
+				Statements.run();
+			}
 		}
 	}
 }
