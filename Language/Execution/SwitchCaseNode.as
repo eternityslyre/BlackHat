@@ -9,15 +9,18 @@
 *********************************************************************************/
 
 package Language.Execution {
-	public class WhileLoopNode {
+	public class SwitchCaseNode{
 		//return type, default void
 		private var returnType:int = 0;
 		private var children:Array;
-		
+
+		public function SwitchCaseNode(args:Array){
+			//get 
+
+		}
+
 		public function run():Object{
-			if(Boolean(Conditional.run())){
-				Statements.run();
-			}
+			Cases.run();
 		}
 	}
 }

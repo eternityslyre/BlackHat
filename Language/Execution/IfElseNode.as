@@ -9,14 +9,17 @@
 *********************************************************************************/
 
 package Language.Execution {
-	public class WhileLoopNode {
+	public class IfElseNode {
 		//return type, default void
 		private var returnType:int = 0;
 		private var children:Array;
-		
+		//default implementation
 		public function run():Object{
-			if(Boolean(Conditional.run())){
-				Statements.run();
+			if(Conditional.run()){
+				Statements1.run();
+			}
+			else {
+				Statements2.run();
 			}
 		}
 	}
