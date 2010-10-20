@@ -63,6 +63,7 @@ package Language.Tokens {
 				lexicon[types[1].charAt(i)] = true;
 				punctuation[types[1].charAt(i)] = true;
 			}
+			lexicon["$"] = true;
 			tryParse();
 		}
 		
@@ -92,6 +93,7 @@ package Language.Tokens {
 						dictionary.add(tokens[s], i);
 					}
 				}
+				dictionary.add("$",0);
 			}
 			tryParse();
 			
