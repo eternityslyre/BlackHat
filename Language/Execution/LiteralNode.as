@@ -8,13 +8,15 @@
 *
 *********************************************************************************/
 
-package Language.Execution {
-	public class ExecutionNode {
+package Language.Literal {
+	public class LiteralNode {
 		//return type, default void
 		private var returnType:int = 0;
 		private var children:Array;
 		
-		public function ExecutionNode(){
+		public function LiteralNode(){
+			//parse the value
+
 		}
 		//default implementation
 		public function run():Object{ if(children.length>0) return children[0].run(); return null; }

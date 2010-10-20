@@ -89,7 +89,7 @@ package Language.Builder {
 
 		public function getRule(ruleNumber:int):Rule{
 			var ruletext = rules[ruleNumber];
-			var sides = ruletext.split("->");
+			var sides = ruletext.split(/\s*->\s*/);
 			return new Rule(sides[0], sides[1], ruleMap[ruletext]);
 		}
 

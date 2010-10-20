@@ -23,7 +23,7 @@ package Language.Builder {
 			}
 			else 
 				productions = rhs.split(/\s+/g);
-			//trace(left+", "+right+", ["+productions+"]");
+			//trace(left+", ["+right+"], ["+productions+"]");
 		}
 
 		public function getLHS(){

@@ -8,12 +8,27 @@ Statement->
 Expression
 WhileLoop
 ForLoop
+SwitchCase
 
 WhileLoop-> 
 while ( Expression ) { Statements }
 
 ForLooop-> 
 for ( Expression ; Expression ; Expression ) { Statements }
+
+SwitchCase->
+switch ( Value ) { Cases }
+
+Cases->
+Case Cases
+
+Case->
+case Literal : Statements
+case Literal : Statements break ;
+case Literal : break ;
+default : 
+default : Statements break ;
+default : break ;
 
 Expression->
 Value InfixOp Value

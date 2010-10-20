@@ -12,9 +12,9 @@ package Language.Execution {
 	public class StatementsNode {
 		private var Statements:ExecutionNode;
 		private var Statement:ExecutionNode;
-		public function StatementsNode(statement:ExecutionNode, statements:ExecutionNode = null){
-			Statements = statements;
-			Statement = statement;
+		public function StatementsNode(args:Array){
+			Statements = args.pop();
+			Statement = args.pop();
 		}
 		//default implementation
 		public function run():Object{ 
