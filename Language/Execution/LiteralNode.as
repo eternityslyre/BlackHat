@@ -9,21 +9,14 @@
 *********************************************************************************/
 
 package Language.Execution {
-	public class SwitchCaseNode{
+	public class ExecutionNode {
 		//return type, default void
 		private var returnType:int = 0;
 		private var children:Array;
-
-		//SwitchCase->
-		//switch ( Value ) { Cases }
-		public function SwitchCaseNode(args:Array){
-			SwitchValue = args[2];
-			Cases = args[5];
-
+		
+		public function ExecutionNode(){
 		}
-
-		public function run():Object{
-			Cases.run(SwitchValue);
-		}
+		//default implementation
+		public function run():Object{ if(children.length>0) return children[0].run(); return null; }
 	}
 }

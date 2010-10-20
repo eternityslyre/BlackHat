@@ -9,21 +9,34 @@
 *********************************************************************************/
 
 package Language.Execution {
-	public class SwitchCaseNode{
+	public class CasesNode{
 		//return type, default void
 		private var returnType:int = 0;
 		private var children:Array;
 
-		//SwitchCase->
-		//switch ( Value ) { Cases }
-		public function SwitchCaseNode(args:Array){
-			SwitchValue = args[2];
-			Cases = args[5];
-
+		/*  Case->
+			case Literal : Statements
+			case Literal : Statements break ;
+			case Literal : break ;
+			default : 
+			default : break ;
+		*/
+		public function CasesNode(args:Array){
+			var colon = args[2] == ":" ? 2 : 1;	
+			LiteralValue = args[colon - 1];
+			Statements = args[colon + 1];
+			shouldBreak = args[args.length-1] == ";";
 		}
 
-		public function run():Object{
-			Cases.run(SwitchValue);
+		public function run(arg:Object):Object{
+			//if it's default there's no Literal
+
+			if(!LiteralValue typeof Literal || arg.equals(LiteralValue)){
+				Statements.run();
+				if(shouldBreak)
+					return;
+			}
+			Cases.run(arg);	
 		}
 	}
 }
