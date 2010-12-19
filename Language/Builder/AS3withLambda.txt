@@ -1,0 +1,84 @@
+Program->
+Statements
+
+Statements-> 
+Statement [Statements] 
+
+Statement-> 
+Expression ;
+WhileLoop
+ForLoop
+SwitchCase
+lambda
+
+WhileLoop-> 
+while ( Statement ) { Statements }
+
+ForLooop-> 
+for ( Statement ; Statement ; Statement ) { Statements }
+
+SwitchCase->
+switch ( Value ) { Cases }
+
+Cases->
+Case Cases
+
+Case->
+case Literal : Statements [break ;]
+default : Statements [break ;]
+
+Expression->
+Value InfixOp Value
+Value
+
+Value->
+[PrefixOp] Value [PostfixOp]
+Variable
+Literal
+FunctionReturn
+
+FunctionReturn->
+new ClassName ( [Arguments] ) ;
+FunctionName ( [Arguments] ) ;
+
+Literal->
+String
+Number
+null
+undefined
+
+Arguments->
+Argument [Arguments] 
+
+Argument->
+Expression
+
+PrefixOp->
+++
+--
+-
+!
+
+PostfixOp->
+++
+--
+
+InfixOp->
+=
+==
+!=
++
++=
+-
+-=
+%
+%=
+/
+/=
+&
+&=
+&&
+|
+|=
+||
+
