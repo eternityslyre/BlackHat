@@ -109,8 +109,15 @@ package Language.Builder {
 			var markedSymbols = new TreeSet();
 			var rule = set.next();
 			while(rule != null){
-				if(!rule.complete()) 
+				if(!rule.complete()){ 
 					markedSymbols.addString(rule.getMarked());
+					//Handle lambda rules!!
+					if(grammar.lambdaRule(rule.getMarked()))
+					{
+						var nextRule = rule.acceptToken(rule.getMarked());
+						markedSymbols.addString(nextRule.getMarked());
+					}
+				}
 				rule = set.next();
 			}
 			markedSymbols.start();
