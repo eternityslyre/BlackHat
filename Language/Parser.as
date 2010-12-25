@@ -15,64 +15,77 @@ package Language {
 		private var executionTree:Array;
 		private var variables:Object;
 		private var grammar:Grammar;
+		private var callback:Function;
 		
-		public function Parser(grammarFile:String, tokenFile:String, lexicon:String, callback:Function){
+		public function Parser(grammarFile:String, tokenFile:String, lexicon:String, call:Function){
 			grammar = new Grammar(grammarFile, catchCall);
 			token = new TokenParser(tokenFile, lexicon, catchCall);
+			callback = call;
 		}
 
 		private var called:int = 0;
 		private function catchCall(){
-			trace("hihi");
+			//trace("hihi");
 			called++;
 			if(called>1){
 				var builder:TableBuilder = new TableBuilder();
 				table = builder.Build(grammar);
-				parseString("1+1");
+				callback.call();
+				//parseString("1+1");
 			}
 			else {
 			}
 		}
 
 		public function parseString(input:String):ExecutionNode {
+			//trace("BEGIN PARSE");
 			stack = new Array();
 			executionTree = new Array();
 			stack.push("ZZ");
 			stack.push(0);
 			var next:Token;
 			token.loadString(input+"$");
+			next = token.nextToken();
 			while(next!=null){
-				var s = next.getSymbol();
+				var s = next.getType();
 				//get state
 				var state:int = stack.pop();
 				//build the execution stack
+				//trace("State "+state+", Symbol "+s);
 				if(table[state][s]==null){
-					trace("UNEXPECTED TOKEN: "+s.getSymbol());
+					//trace("UNEXPECTED TOKEN: "+s);
 					return null;
 				}
 				switch(table[state][s].charAt(0)){
 					case "s":
+						//trace("Shift "+table[state][s].substring(1,table[state][s].length)+", "+s);
+						stack.push(state);
 						stack.push(s);
 						stack.push(table[state][s].substring(1,table[state][s].length));
 						next = token.nextToken();
 					break;
 					case "r":
-					//construct a node from what we have here.
+						//construct a node from what we have here.
 						var rule = grammar.getRule(int(table[state][s].substring(1,table[state][s].length)));
+						//trace("rule number: "+int(table[state][s].substring(1,table[state][s].length)))
+						//trace("Reduce with rule "+rule);
 						var productions = rule.getProductions();
 						var args = new Array();
 						for(var i in productions){
 							args.push(executionTree.pop());
-							stack.pop();
+							var popped = stack.pop();
+							state = stack.pop();
 						}
-						stack.push(new Token(rule.getLHS(), rule.getLHS()));
-						stack.push(next);
+						var newtoken = new Token(rule.getLHS(), rule.getLHS());
+						stack.push(state);
+						stack.push(newtoken);
+						stack.push(table[state][newtoken.getType()].substring(1,table[state][newtoken.getType()].length))
 						executionTree.push(makeNode(rule.getLHS(),args));
 					break;
 					//accept case
 					case "a":
 						//finish!
-						trace("Accepted!");
+						//trace("Accepted!");
 						return executionTree.pop();
 					default:
 						return null;
@@ -82,9 +95,11 @@ package Language {
 			return null;
 			
 		}
-/*
+
 		private function makeNode(lhs:String, args:Array){
+			trace("Making a node for "+lhs);
 			switch(lhs){
+				/*
 				case "ForLoop":
 					return new ForLoopNode(args);
 				break;
@@ -117,14 +132,23 @@ package Language {
 				case "Value":
 					return new ValueNode(args);
 				break;
-				case "Literal":
-					return new LiteralNode(args);
-				break;
 				case "FunctionReturn":
 					return new FunctionReturnNode(args);
 				break;
+				*/
+				case "InfixOp":
+					return new InfixOpNode(args);
+				break;
+				case "Expression":
+					return new ExpressionNode(args);
+				break;
+				case "Value":
+				case "variable":
+				case "number":
+					return new ValueNode(args);
+				break;
 
 			}
-		}*/
+		}
 	};
 }

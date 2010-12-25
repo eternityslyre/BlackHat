@@ -13,6 +13,15 @@ package Language.Execution {
 		//return type, default void
 		private var returnType:int = 0;
 		private var children:Array;
+
+		public function ExecutionNode(args:Array)
+		{
+			trace("Node created with args:");
+			for( var a in args)
+			{
+				trace(args[a]);
+			}
+		}
 		//default implementation
 		public function run():Object{ if(children.length>0) return children[0].run(); return null; }
 	}

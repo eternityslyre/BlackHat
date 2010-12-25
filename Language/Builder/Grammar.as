@@ -15,6 +15,8 @@ package Language.Builder {
 		//an array of all symbols; this is kind of useful.
 		private var allSymbols:Array;
 
+		private var allSymbolSet:TreeSet;
+
 		private var callback:Function;
 		private var load:URLLoader;
 
@@ -34,10 +36,10 @@ package Language.Builder {
 			//build the grammar!!
 			var loadText:String = load.data;
 			
-			var symbolSet = new TreeSet();
+			allSymbolSet = new TreeSet();
 			//split rules
 			var rule = loadText.split(/\n\s*\n/);
-			trace(rules);
+			rules.push("Reserved for S' rule.");
 			var counter = 1;
 			for(var i =0;i<rule.length;i++){
 				var switched:String = rule[i].replace(/(\r|\n)+/g,"$$$");
@@ -50,40 +52,52 @@ package Language.Builder {
 				if(derivations[sides[0]]==undefined)
 					derivations[sides[0]] = new Array();
 				for(var j = 0; j < derivation.length; j++){
-					var ruletext:String = sides[0]+" -> "+derivation[j];
-					trace("adding rule: ["+ruletext+"] number "+(counter));
-					ruleMap[ruletext] = counter;
-					rules[counter] = ruletext;
+					recurseRule(sides[0], derivation[j]);
 					counter++;
-					derivations[sides[0]].push(derivation[j]);
-					var symbols = derivation[j].split(" ");
-					for(var k in symbols)
-					symbolSet.addString(symbols[k]);
 				}
 			}
 
 			//construct the symbol array
 			var symb:String;
-			symbolSet.printAll();
-			symbolSet.start();
-			while((symb = symbolSet.nextString()) != null){
+			allSymbolSet.printAll();
+			allSymbolSet.start();
+			while((symb = allSymbolSet.nextString()) != null){
 				allSymbols.push(symb);
 			}
 
 			callback.call();
 		}
 
+		private function recurseRule(lhs:String, rhs:String)
+		{
+			if(rhs.match(/\[\w+( \w+)*\]/))
+			{
+				trace("optional portion found, retrying...");
+				//remove first optional portion
+				var newRHS = rhs.replace(/ ?\[\w+( \w+)*\]/, "");
+				recurseRule(lhs, newRHS);
+			}
+			var cleanedRHS = rhs.replace(/\[?(\w+)\]?/g,"$1");
+			addRule(lhs, cleanedRHS, rules.length);
+		}
+
 		public function addRule(lhs:String, rhs:String, ruleindex=-1){
 			if(derivations[lhs] == undefined)
 				derivations[lhs] = new Array();
-			if(rhs.match(/\r|\n/g)!=null){
-				var splits = rhs.split(/\r|\n/g);
-				trace("ADDING RULE: ["+splits+"]");
-				for(var s in splits){
-					derivations[lhs].push(splits[s]);
-				}
+			var ruletext = lhs+" -> "+rhs;
+			trace("adding rule: ["+ruletext+"] number "+(ruleindex));
+			if(ruleindex < 0 ) 
+				ruleindex = rules.length;
+			rules[ruleindex] = ruletext;
+			derivations[lhs].push(rhs);
+			ruleMap[ruletext] = ruleindex;
+			var symbols = rhs.split(/\s+/);
+			for(var k = 0; k < symbols.length; k++){
+				if(symbols[k].length < 1)
+					continue;
+				trace("adding "+symbols[k]+" to symbol set");
+				allSymbolSet.addString(symbols[k]);
 			}
-			rules[ruleindex] = lhs+" -> "+rhs;
 
 		}
 

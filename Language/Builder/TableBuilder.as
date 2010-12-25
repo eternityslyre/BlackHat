@@ -82,9 +82,15 @@ package Language.Builder {
 			stateMap[0][firstSymbol] = undefined;
 			states[0].add(new Rule("SS", firstSymbol, 0));
 			queue.push(states[0]);
+			queue.push(0);
 			while(queue.length>0){
 				trace(queue.length);
 				processState(grammar, queue.shift(), queue.shift(), queue);
+			}
+
+			for(var key in ruleStateMap)
+			{
+				trace(key+": "+ruleStateMap[key]);
 			}
 				
 			
@@ -111,12 +117,6 @@ package Language.Builder {
 			while(rule != null){
 				if(!rule.complete()){ 
 					markedSymbols.addString(rule.getMarked());
-					//Handle lambda rules!!
-					if(grammar.lambdaRule(rule.getMarked()))
-					{
-						var nextRule = rule.acceptToken(rule.getMarked());
-						markedSymbols.addString(nextRule.getMarked());
-					}
 				}
 				rule = set.next();
 			}
@@ -161,6 +161,10 @@ package Language.Builder {
 					stateMap[lastID][symb] = ruleStateMap[newRule.getAnnotatedForm()];
 				}
 				else {
+					for(var key in ruleStateMap)
+					{
+						trace(key+": "+ruleStateMap[key]);
+					}
 					var next = nextID();
 					trace("making new state for this rule: "+next);
 					actionTable[next] = new Object();
@@ -190,6 +194,7 @@ package Language.Builder {
 				states[stateMap[lastID][symb]].printAll();
 				trace("Is this rule in here already?? "+newRule.getAnnotatedForm());
 				trace(states[stateMap[lastID][symb]].contains(newRule));
+				ruleStateMap[newRule.getAnnotatedForm()] = stateMap[lastID][symb];
 
 				states[stateMap[lastID][symb]].add(newRule);
 				queue.push(states[stateMap[lastID][symb]]);

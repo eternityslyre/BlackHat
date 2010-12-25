@@ -108,7 +108,10 @@ package Language.Tokens {
 					//trace("testing [["+s+"]] for type "+tokenMapping[typename]+", index: "+tokenMapping[typename]);
 					//trace(regularTypes[typename]);
 					if(regularTypes[typename].test(s))
+					{
+						//trace("match for type "+tokenMapping[typename]);
 						return typename;
+					}
 				}
 				return -1;
 			}

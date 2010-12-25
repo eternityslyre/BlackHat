@@ -40,4 +40,4 @@ number:
 string:
 /^".*"$/
 variable:
-/^(_|\w+)$/
+/^(_|\w|\d)+$/
