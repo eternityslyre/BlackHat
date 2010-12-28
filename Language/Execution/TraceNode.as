@@ -9,24 +9,21 @@
 *********************************************************************************/
 
 package Language.Execution {
-	public class IfElseNode extends ExecutionNode{
+	public class TraceNode extends ExecutionNode {
 		//return type, default void
 		private var returnType:int = 0;
 		private var children:Array;
 
-		public function IFElseNode(lhs:String, args:Array)
+		public function TraceNode(lhs:String, args:Array)
 		{
 			super(lhs, args);
+			children = args;
 		}
 
-		//default implementation
-		public function run():Object{
-			if(Conditional.run() == true){
-				Statements1.run();
-			}
-			else {
-				Statements2.run();
-			}
+		public override function run():Object
+		{
+			trace("TRACE: "+children[2].run());
+			return null;
 		}
 	}
 }

@@ -16,7 +16,6 @@ package Language.Builder {
 			ruleNumber = num;
 			lhs = left.replace(/\s+/g, "");;
 			rhs = right;
-			trace(rhs.match(/\s+/));
 			if(rhs.match(/\s+/) == null){
 				productions = new Array();
 				productions[0] = rhs;

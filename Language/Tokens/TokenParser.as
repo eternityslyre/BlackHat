@@ -108,7 +108,10 @@ package Language.Tokens {
 					//trace("testing [["+s+"]] for type "+tokenMapping[typename]+", index: "+tokenMapping[typename]);
 					//trace(regularTypes[typename]);
 					if(regularTypes[typename].test(s))
+					{
+						//trace("match for type "+tokenMapping[typename]);
 						return typename;
+					}
 				}
 				return -1;
 			}
@@ -128,7 +131,7 @@ package Language.Tokens {
 		}
 
 		public function nextToken():Token{
-			//trace("start: "+code+", "+index+", ["+code.charAt(index)+"]");
+			trace("start: "+code+", "+index+", ["+code.charAt(index)+"]");
 			scanIndex = index;
 			var current = "";
 			//if current character is invalid, check if it's a 
@@ -148,7 +151,7 @@ package Language.Tokens {
 			}
 			//parse until the next invalid character
 				//trace((invalidCharacter(code.charAt(scanIndex)))+", "+(scanIndex<code.length));
-			while(!invalidCharacter(code.charAt(scanIndex))&&scanIndex<code.length){
+			while(!invalidCharacter(code.charAt(scanIndex))&&scanIndex < code.length){
 				//trace("append");
 				//trace((invalidCharacter(code.charAt(scanIndex)))+", "+(scanIndex<code.length));
 				current+=code.charAt(scanIndex);
@@ -157,7 +160,7 @@ package Language.Tokens {
 
 			var out = tokenify(current);
 			if(out!=null){
-				//trace("Moving index! Found "+out.getSymbol() +", "+scanIndex+", "+index);
+				trace("Moving index! Found "+out.getSymbol() +", "+scanIndex+", "+index+", "+code.length);
 				index = scanIndex;
 			}
 			else {
@@ -169,10 +172,15 @@ package Language.Tokens {
 		
 		private function tokenify(s:String){
 			if(s.length <= 0) return null;
-			if(identify(s) > 0)
-				return new Token(tokenMapping[identify(s)],s);
-			if(identify(s)==0)
+			var type = identify(s);
+			if(type > 0){
+				trace("Returning new token, type "+tokenMapping[type]+", string "+s);
+				return new Token(tokenMapping[type],s);
+			}
+			if(identify(s)==0){
+				trace("Returning new token, type "+tokenMapping[type]+", string "+s);
 				return new Token(s,s);
+			}
 			
 			//trace("backtrack! "+s+", scanindex at "+scanIndex);
 			//no valid token found; backtrack one character and try again.

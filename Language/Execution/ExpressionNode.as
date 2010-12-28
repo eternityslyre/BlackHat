@@ -9,24 +9,33 @@
 *********************************************************************************/
 
 package Language.Execution {
-	public class IfElseNode extends ExecutionNode{
+	public class ExpressionNode extends ExecutionNode {
 		//return type, default void
 		private var returnType:int = 0;
 		private var children:Array;
-
-		public function IFElseNode(lhs:String, args:Array)
+		private var type:String;
+		
+		public function ExpressionNode(lhs:String, args:Array)
 		{
 			super(lhs, args);
+			children = args;
+			type = args[0].getType();
 		}
 
-		//default implementation
-		public function run():Object{
-			if(Conditional.run() == true){
-				Statements1.run();
-			}
-			else {
-				Statements2.run();
-			}
+		public function getType()
+		{
+			return type;
+		}
+
+		public function innerType(){
+			return children[0].innerType();
+		}
+
+		public override function run():Object{
+			if(children.length==1)
+				return children[0].run();
+			var result = children[1].operate(children[0], children[2]);
+			return result;
 		}
 	}
 }

@@ -30,6 +30,17 @@ package Language.Execution {
 				Statements.run();
 				Iteration.run();
 			}
+		}
+		
+		public function step():Object{
+			if(!initialized){
+				initialized = true;
+				Initalization.run();
+			}
+			if(Boolean(Conditional.run())){
+				Statements.run();
+				Iteration.run();
+			}
 				
 		}
 	}

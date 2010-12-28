@@ -1,0 +1,34 @@
+Program->
+Statements
+
+Statements-> 
+Statement ; [Statements]
+
+Statement->
+Expression
+Trace
+IfStatement
+
+IfStatement->
+if ( Statement ) { Statements } [else [if ( Statement )] { Statements }]
+
+Trace->
+trace ( Expression )
+
+Expression->
+//Value [InfixOp Expression]
+Value
+
+InfixOp->
+=
++
+-
+*
+
+Value->
+string
+//number
+//variable
+boolean
+
+
