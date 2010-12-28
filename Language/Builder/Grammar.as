@@ -55,26 +55,8 @@ package Language.Builder {
 				if(derivations[sides[0]]==undefined)
 					derivations[sides[0]] = new Array();
 				for(var j = 0; j < derivation.length; j++){
-<<<<<<< HEAD
-					//TODO: write out permutations for optional derivations
-					var ruletext:String = sides[0]+" -> "+derivation[j];
-					lambda[derivation[j]] = false;
-					trace("adding rule: ["+ruletext+"] number "+(counter));
-					ruleMap[ruletext] = counter;
-					rules[counter] = ruletext;
-					counter++;
-					if(derivation[j] == "lambda")
-					{
-						lambda[derivation[j]] = true;
-					}
-					derivations[sides[0]].push(derivation[j]);
-					var symbols = derivation[j].split(" ");
-					for(var k in symbols)
-					symbolSet.addString(symbols[k]);
-=======
 					recurseRule(sides[0], derivation[j]);
 					counter++;
->>>>>>> 287500e59b67c8bc9a921a1145daf566b389bd8e
 				}
 			}
 
