@@ -9,13 +9,19 @@
 *********************************************************************************/
 
 package Language.Execution {
-	public class IfElseNode {
+	public class IfElseNode extends ExecutionNode{
 		//return type, default void
 		private var returnType:int = 0;
 		private var children:Array;
+
+		public function IFElseNode(lhs:String, args:Array)
+		{
+			super(lhs, args);
+		}
+
 		//default implementation
 		public function run():Object{
-			if(Conditional.run()){
+			if(Conditional.run() == true){
 				Statements1.run();
 			}
 			else {

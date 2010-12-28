@@ -70,14 +70,17 @@ package Language.Builder {
 
 		private function recurseRule(lhs:String, rhs:String)
 		{
-			if(rhs.match(/\[\w+( \w+)*\]/))
+			if(rhs.match(/^\/\//)) return;
+			if(rhs.match(/\[\S|\S\]/))
 			{
-				trace("optional portion found, retrying...");
+				var matched = rhs.match(/\[\S+( \S+)*\]/);
+				trace("optional portion -"+matched+"- found, retrying...");
 				//remove first optional portion
-				var newRHS = rhs.replace(/ ?\[\w+( \w+)*\]/, "");
+				var newRHS = rhs.replace(/\[(\S.*\S)\]/, "$1");
 				recurseRule(lhs, newRHS);
 			}
-			var cleanedRHS = rhs.replace(/\[?(\w+)\]?/g,"$1");
+			var cleanedRHS = rhs.replace(/ ?\[\S+( \S+)*\]/g,"");
+			trace("cleaned version -"+cleanedRHS+"- is now being added...");
 			addRule(lhs, cleanedRHS, rules.length);
 		}
 

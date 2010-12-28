@@ -39,5 +39,7 @@ number:
 /^\d+\(.\d+\)?$/
 string:
 /^".*"$/
+boolean:
+/^(true|false)$/
 variable:
 /^(_|\w|\d)+$/

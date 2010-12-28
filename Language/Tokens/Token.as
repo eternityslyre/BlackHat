@@ -7,16 +7,17 @@
 
 package Language.Tokens {
 	public class Token {
-		//copy-pasted! bad!!
-		public static const TYPE_KEYWORD:int = 0;
-		public static const TYPE_VALUE:int = 1;
-		public static const TYPE_VARIABLE:int = 2;
 		private var type:String;
 		private var symbol:String
 
 		public function Token(tokentype:String, s:String){
-			symbol = s;
 			type = tokentype;
+			symbol = s;
+		}
+
+		public function toString()
+		{
+			return symbol;
 		}
 
 		public function getType(){

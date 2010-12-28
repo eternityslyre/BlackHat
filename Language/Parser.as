@@ -20,6 +20,7 @@ package Language {
 		public function Parser(grammarFile:String, tokenFile:String, lexicon:String, call:Function){
 			grammar = new Grammar(grammarFile, catchCall);
 			token = new TokenParser(tokenFile, lexicon, catchCall);
+			variables = new Object();
 			callback = call;
 		}
 
@@ -31,7 +32,6 @@ package Language {
 				var builder:TableBuilder = new TableBuilder();
 				table = builder.Build(grammar);
 				callback.call();
-				//parseString("1+1");
 			}
 			else {
 			}
@@ -51,43 +51,61 @@ package Language {
 				//get state
 				var state:int = stack.pop();
 				//build the execution stack
-				//trace("State "+state+", Symbol "+s);
+				trace("State "+state+", Symbol "+s);
+				//trace("EXECUTION STACK");
+				for(var t in executionTree)
+				{
+					//trace(executionTree[t]);
+				}
+				//trace("END STACK");
 				if(table[state][s]==null){
-					//trace("UNEXPECTED TOKEN: "+s);
+					trace("UNEXPECTED TOKEN: "+s);
 					return null;
 				}
 				switch(table[state][s].charAt(0)){
 					case "s":
-						//trace("Shift "+table[state][s].substring(1,table[state][s].length)+", "+s);
+						trace("Shift "+table[state][s].substring(1,table[state][s].length)+", "+s);
 						stack.push(state);
-						stack.push(s);
+						stack.push(next);
+						executionTree.push(next);
 						stack.push(table[state][s].substring(1,table[state][s].length));
 						next = token.nextToken();
+						trace("next token is "+next.getSymbol());
 					break;
 					case "r":
 						//construct a node from what we have here.
 						var rule = grammar.getRule(int(table[state][s].substring(1,table[state][s].length)));
-						//trace("rule number: "+int(table[state][s].substring(1,table[state][s].length)))
-						//trace("Reduce with rule "+rule);
+						trace("rule number: "+int(table[state][s].substring(1,table[state][s].length)))
+						trace("Reduce with rule "+rule);
 						var productions = rule.getProductions();
 						var args = new Array();
+						var stackArgs = new Array();
 						for(var i in productions){
-							args.push(executionTree.pop());
-							var popped = stack.pop();
+							if(executionTree.length>0){
+								var popped = executionTree.pop();
+								trace("popping from execution: "+popped);
+								args.push(popped);
+							}
+							stackArgs.push(stack.pop());
 							state = stack.pop();
 						}
 						var newtoken = new Token(rule.getLHS(), rule.getLHS());
 						stack.push(state);
 						stack.push(newtoken);
+						//placeholders.
 						stack.push(table[state][newtoken.getType()].substring(1,table[state][newtoken.getType()].length))
-						executionTree.push(makeNode(rule.getLHS(),args));
+						//reverse the stacks
+						stackArgs.reverse();
+						args.reverse();
+						executionTree.push(makeNode(rule.getLHS(),args, stackArgs));
 					break;
 					//accept case
 					case "a":
 						//finish!
-						//trace("Accepted!");
+						trace("Accepted!");
 						return executionTree.pop();
 					default:
+						trace("SYNTAX ERROR: "+s.getSymbol());
 						return null;
 				}
 				
@@ -96,8 +114,17 @@ package Language {
 			
 		}
 
-		private function makeNode(lhs:String, args:Array){
+		private function makeNode(lhs:String, args:Array, stackArgs:Array){
 			trace("Making a node for "+lhs);
+			//trace("Stack Arguments provided:");
+			for(var a in stackArgs){
+			//	if(stackArgs[a] is Token) trace(stackArgs[a].getSymbol());
+			//	else trace(stackArgs[a]);
+			}
+			//trace("Execution Arguments provided:");
+			for(var a in args){
+			//	trace(args[a]);
+			}
 			switch(lhs){
 				/*
 				case "ForLoop":
@@ -137,16 +164,21 @@ package Language {
 				break;
 				*/
 				case "InfixOp":
-					return new InfixOpNode(args);
+					return new InfixOpNode(lhs, args, stackArgs);
 				break;
 				case "Expression":
-					return new ExpressionNode(args);
+					return new ExpressionNode(lhs, args);
 				break;
 				case "Value":
 				case "variable":
 				case "number":
-					return new ValueNode(args);
+					return new ValueNode(lhs, args, stackArgs, variables);
 				break;
+				case "Trace":
+					return new TraceNode(lhs, args);
+				break;
+				default:
+					return new ExecutionNode(lhs, args);
 
 			}
 		}
