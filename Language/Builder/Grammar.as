@@ -1,4 +1,4 @@
-/*************************************************************************************
+﻿/*************************************************************************************
 *   A simple class which holds rules and maps rules to numbers.
 *   Apparently this will make my life much, much easier!
 *******************************************************************************/
@@ -14,6 +14,8 @@ package Language.Builder {
 		private var derivations:Object;
 		//an array of all symbols; this is kind of useful.
 		private var allSymbols:Array;
+		//map for remembering lambda rules.
+		private var lambda:Object;
 
 		private var callback:Function;
 		private var load:URLLoader;
@@ -22,6 +24,7 @@ package Language.Builder {
 			rules = new Array();
 			ruleMap = new Object();
 			derivations = new Object();
+			lambda = new Object();
 			load = new URLLoader();
 			allSymbols = new Array();
 			load.addEventListener(Event.COMPLETE, buildGrammar);
@@ -50,11 +53,17 @@ package Language.Builder {
 				if(derivations[sides[0]]==undefined)
 					derivations[sides[0]] = new Array();
 				for(var j = 0; j < derivation.length; j++){
+					//TODO: write out permutations for optional derivations
 					var ruletext:String = sides[0]+" -> "+derivation[j];
+					lambda[derivation[j]] = false;
 					trace("adding rule: ["+ruletext+"] number "+(counter));
 					ruleMap[ruletext] = counter;
 					rules[counter] = ruletext;
 					counter++;
+					if(derivation[j] == "lambda")
+					{
+						lambda[derivation[j]] = true;
+					}
 					derivations[sides[0]].push(derivation[j]);
 					var symbols = derivation[j].split(" ");
 					for(var k in symbols)
@@ -80,7 +89,17 @@ package Language.Builder {
 				var splits = rhs.split(/\r|\n/g);
 				trace("ADDING RULE: ["+splits+"]");
 				for(var s in splits){
-					derivations[lhs].push(splits[s]);
+					//TODO: make this permute for optional symbols.	
+					var matched = rhs.match(/ [\w+.*]/)
+					if(matched!= null)
+					{
+						var withString = rhs.replace(/ [\(\w+.*\)]/,"$&");
+						var withoutString = rhs.replace(/ [\(\w+.*\)]/,"");
+						addRule(lhs, withString, ruleindex);
+						addRule(lhs, withoutString, ruleindex);
+					}
+					else
+						derivations[lhs].push(splits[s]);
 				}
 			}
 			rules[ruleindex] = lhs+" -> "+rhs;
@@ -103,6 +122,10 @@ package Language.Builder {
 
 		public function getSymbolSet():Array{
 			return allSymbols;
+		}
+
+		public function lambdaRule(symbol:String):Boolean{
+			return lambda[symbol];
 		}
 
 		public function printRules(){

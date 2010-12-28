@@ -15,5 +15,13 @@ package Language.Execution {
 		private var children:Array;
 		//default implementation
 		public function run():Object{ if(children.length>0) return children[0].run(); return null; }
+		public function isAssignable():Boolean
+		{
+			return true;
+		}
+		public function assign(arg:Object)
+		{
+			VariableMap.put(this.name, arg);
+		}
 	}
 }
