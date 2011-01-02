@@ -3,9 +3,8 @@ Statements
 
 Statements-> 
 Statements ControlFlow
-ControlFlow Statements
-Statements ; [Statement]
-Statement
+Statements Statement ;
+Statement ;
 ControlFlow
 
 Block->
@@ -21,7 +20,10 @@ Statement->
 Expression
 Trace
 Declaration
-FunctionCall
+Return
+
+Return->
+return Expression
 
 FunctionCall->
 variable ( [Arguments] )
@@ -56,6 +58,7 @@ trace ( Expression )
 Expression->
 Expression InfixOp Value
 Value
+FunctionCall
 
 InfixOp->
 +

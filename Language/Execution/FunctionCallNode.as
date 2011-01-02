@@ -26,6 +26,18 @@ package Language.Execution {
 
 		}
 
+		public function getType():String
+		{
+			return "variable";
+		}
+
+		public function innerType():String
+		{
+			//HACK
+			return "number";
+		}
+
+
 		public override function run():Object{
 			//Case-by-case handling
 			// case function Function 

@@ -24,6 +24,7 @@ package Language.Tokens {
 		private var load:URLLoader;
 		private var lexload:URLLoader;
 		private var callback:Function;
+		private var lastIndex:int;
 
 		//SIGH
 		private var loadtime:int;
@@ -142,8 +143,9 @@ package Language.Tokens {
 			while(lexicon[code.charAt(scanIndex)] == undefined && scanIndex < code.length){
 				//trace("skip "+code.charAt(scanIndex)+", next is ["+code.charAt(scanIndex+1)+"]");
 				locate();
-				index++;
 				scanIndex++;
+				lastIndex = index;
+				index = scanIndex;
 			}
 			
 			//handle strings
@@ -159,6 +161,7 @@ package Language.Tokens {
 				var out = tokenify(current);
 				if(out==null)
 					//trace("ERROR: UNFINSIHED STRING "+current);
+				lastIndex = index;
 				index = scanIndex;
 				return out;
 			}
@@ -177,6 +180,7 @@ package Language.Tokens {
 			if(out!=null){
 				//trace("Moving index! Found "+out.getSymbol() +", scan  "+scanIndex+", index "+index+", "+code.length);
 				locate();
+				lastIndex = index;
 				index = scanIndex;
 				locate();
 				//trace("finish: "+code+", index "+index+", character ["+code.charAt(index)+"]");
@@ -209,6 +213,11 @@ package Language.Tokens {
 		public function locate():String
 		{
 			return code.substring(0,index)+"["+code.substring(index, scanIndex+1)+"]"+code.substring(scanIndex+1, code.length);
+		}
+
+		public function locateError():String
+		{
+			return code.substring(0,lastIndex)+"["+code.substring(lastIndex, index)+"]"+code.substring(index, code.length);
 		}
 	}
 

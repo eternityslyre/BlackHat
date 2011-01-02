@@ -126,7 +126,7 @@ package Language {
 
 		public function currentPosition():String
 		{
-			return token.locate();
+			return token.locateError();
 		}
 
 		public function succeeded()
