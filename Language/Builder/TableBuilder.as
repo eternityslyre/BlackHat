@@ -15,6 +15,7 @@ package Language.Builder {
 		private var stateMap:Array;
 		private var ruleStateMap:Object;
 		private var grammar:Grammar;
+		private var terminate:Boolean;
 		
 
 		public function TableBuilder(){
@@ -23,7 +24,6 @@ package Language.Builder {
 		/* Takes in a pointer to a space-delimited string. */
 		public function Build(grammar:Grammar):Object{
 			buildTable(grammar);
-			printAll(grammar);
 			return actionTable;
 		}
 
@@ -46,7 +46,6 @@ package Language.Builder {
 				var stringrow = a+": "
 				if(stringrow.length<4)
 					stringrow = " "+stringrow;
-				//trace(actionTable[a]);
 				for(var s in symbols){
 					if(actionTable[a][symbols[s]] != undefined){
 						stringrow += actionTable[a][symbols[s]]+" ";
@@ -58,20 +57,31 @@ package Language.Builder {
 				stringrow += actionTable[a]["$"]+" ";
 				trace(stringrow);
 			}
+		}
 
-			for(var e in states){
-				trace("state "+e+":");
-				states[e].printAll();
+		public function printStates()
+		{
+			for(var state in states)
+			{
+				states[state].start();
+				trace("STATE: "+state+" =====================================");
+				var rule = states[state].next();
+				while((rule = states[state].next()) != null)
+				{
+					trace(rule.getAnnotatedForm());
+				}
+				trace("END STATE: "+state+" =====================================");
 			}
 		}
 
 
 		public function buildTable(grammar:Grammar){
+			terminate = false;
 			actionTable = new Object();
 			actionTable[0] = new Object();
 			queue = new Array();
 			var firstSymbol = grammar.getRule(1).getLHS();
-			trace(firstSymbol);
+			//trace(firstSymbol);
 			grammar.addRule("SS",firstSymbol,0);
 			states = new Array();
 			ruleStateMap = new Object();
@@ -84,16 +94,9 @@ package Language.Builder {
 			queue.push(states[0]);
 			queue.push(0);
 			while(queue.length>0){
-				trace(queue.length);
 				processState(grammar, queue.shift(), queue.shift(), queue);
+				if(terminate)break;
 			}
-
-			for(var key in ruleStateMap)
-			{
-				trace(key+": "+ruleStateMap[key]);
-			}
-				
-			
 		}
 
 		function processState(grammar:Grammar, set:TreeSet, index:int, queue:Array){
@@ -101,11 +104,11 @@ package Language.Builder {
 			var lastSize = set.getSize();
 			var tokens = expand(set, grammar);
 			while(set.getSize() != lastSize){
-				trace(lastSize+", "+set.getSize());
+				//trace(lastSize+", "+set.getSize());
 				lastSize = set.getSize();
 				tokens = expand(set,grammar);
+				if(terminate)break;
 			}
-			set.printAll();
 			traverse(tokens, index, queue, grammar);	
 
 		}
@@ -119,16 +122,18 @@ package Language.Builder {
 					markedSymbols.addString(rule.getMarked());
 				}
 				rule = set.next();
+				if(terminate)break;
 			}
 			markedSymbols.start();
 			var symbol;// = markedSymbols.nextString();
 			while((symbol = markedSymbols.nextString()) != null){
-				trace("checking "+symbol+" : "+grammar.getDerivations(symbol));
+				//trace("checking "+symbol+" : "+grammar.getDerivations(symbol));
 				var productions = grammar.getDerivations(symbol);
 				if(productions == undefined) continue;
 				for(var i = 0; i < productions.length; i++){
 					set.add(new Rule(symbol, productions[i], grammar.getNumber(symbol+" -> "+productions[i])));
 				}
+				if(terminate)break;
 				//symbol = markedSymbols.nextString();
 			}
 			return markedSymbols;
@@ -138,24 +143,25 @@ package Language.Builder {
 			tokens.start();
 			var next = tokens.nextString();
 			while(next != null) {
-				//trace(next);
+				////trace(next);
 				var rules = states[startNode];
 				rules.start();
 				var currentRule = rules.next();
 				while(currentRule!=null){
-					//trace(currentRule.getAnnotatedForm());
+					////trace(currentRule.getAnnotatedForm());
 					if(currentRule.getMarked() == next){
 						var newRule = currentRule.acceptToken(next);
 						linkOrAdd(newRule, next, startNode, queue, grammar);
 					}
 					currentRule = rules.next();
+					if(terminate)break;
 				}
 				next = tokens.nextString();
 			}
 		}
 
 		private function linkOrAdd(newRule:Rule, symb:String, lastID:int, queue:Array, grammar:Grammar){
-			trace("processing new rule "+newRule.getAnnotatedForm()+", "+lastID+", "+symb+", "+stateMap[lastID][symb]);
+			//trace("processing new rule "+newRule.getAnnotatedForm()+", "+lastID+", "+symb+", "+stateMap[lastID][symb]);
 			if(stateMap[lastID][symb] == undefined){
 				if(ruleStateMap[newRule.getAnnotatedForm()] != undefined){
 					stateMap[lastID][symb] = ruleStateMap[newRule.getAnnotatedForm()];
@@ -163,10 +169,10 @@ package Language.Builder {
 				else {
 					for(var key in ruleStateMap)
 					{
-						trace(key+": "+ruleStateMap[key]);
+						//trace(key+": "+ruleStateMap[key]);
 					}
 					var next = nextID();
-					trace("making new state for this rule: "+next);
+					//trace("making new state for this rule: "+next);
 					actionTable[next] = new Object();
 					stateMap[lastID][symb] = next;
 					stateMap[next] = new Object();
@@ -175,15 +181,25 @@ package Language.Builder {
 					queue.push(states[next]);
 					queue.push(next);
 					if(newRule.complete()){
-						trace("accepting "+symb+" completes rule: "+newRule.getAnnotatedForm()+" number "+newRule.getRuleNumber());
+						trace("STATE "+next+" ACCEPTS "+symb+" to complete rule: "+newRule.getAnnotatedForm()+" number "+newRule.getRuleNumber());
 						//EVERY ACTION MUST RESULT IN A REDUCE!
 						var symset = grammar.getSymbolSet();
 						//THE END!!
 						if(newRule.getRuleNumber() != 0){
-							for(var s in symset)
+							for(var s in symset){
+								var original = actionTable[next][symset[s]];
+								if(original !== undefined)
+									trace("replacing "+original+" with "+"r"+newRule.getRuleNumber());
+								if(actionTable[next][symset[s]]!= undefined){
+									trace("OVERWRITING A SHIFT RUEL!!:!");
+									trace("state "+next+", symbol "+symset[s]+",  original rule "+actionTable[next][symset[s]]);
+									trace("replacing with "+"r"+newRule.getRuleNumber());
+									terminate = true;
+									return;
+								}
 								actionTable[next][symset[s]] = "r"+newRule.getRuleNumber();
+							}
 							actionTable[next]["$"] = "r"+newRule.getRuleNumber();
-
 						}
 						else actionTable[next]["$"] = "acc";
 					}
@@ -191,15 +207,41 @@ package Language.Builder {
 				}
 			}
 			else if(stateMap[lastID][symb] != lastID && !states[stateMap[lastID][symb]].contains(newRule)){
-				states[stateMap[lastID][symb]].printAll();
-				trace("Is this rule in here already?? "+newRule.getAnnotatedForm());
-				trace(states[stateMap[lastID][symb]].contains(newRule));
+				//trace("Is this rule in here already?? "+newRule.getAnnotatedForm());
+				//trace(states[stateMap[lastID][symb]].contains(newRule));
 				ruleStateMap[newRule.getAnnotatedForm()] = stateMap[lastID][symb];
+				var next = stateMap[lastID][symb];
+				if(newRule.complete()){
+					trace("STATE "+next+" ACCEPTS "+symb+" to complete rule: "+newRule.getAnnotatedForm()+" number "+newRule.getRuleNumber());
+					//EVERY ACTION MUST RESULT IN A REDUCE!
+					var symset = grammar.getSymbolSet();
+					//THE END!!
+					if(newRule.getRuleNumber() != 0){
+						for(var s in symset){
+							var original = actionTable[next][symset[s]];
+							if(original !== undefined)
+							trace("replacing "+original+" with "+"r"+newRule.getRuleNumber());
+							if(actionTable[next][symset[s]]!= undefined){
+								trace("OVERWRITING A SHIFT RUEL!!:!");
+								trace("state "+next+", symbol "+symset[s]+",  original rule "+actionTable[next][symset[s]]);
+								trace("replacing with "+"r"+newRule.getRuleNumber());
+								terminate = true;
+								return;
+							}
+							actionTable[next][symset[s]] = "r"+newRule.getRuleNumber();
+						}
+						actionTable[next]["$"] = "r"+newRule.getRuleNumber();
 
+					}
+					else actionTable[next]["$"] = "acc";
+				}
 				states[stateMap[lastID][symb]].add(newRule);
 				queue.push(states[stateMap[lastID][symb]]);
 				queue.push(stateMap[lastID][symb]);
 			}
+			var original = actionTable[lastID][symb];
+			if(original !== undefined && original != "s"+stateMap[lastID][symb])
+				trace("replacing "+original+" with "+"s"+stateMap[lastID][symb]);
 			actionTable[lastID][symb] = "s"+stateMap[lastID][symb];
 		}
 

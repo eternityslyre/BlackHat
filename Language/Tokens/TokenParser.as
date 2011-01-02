@@ -99,10 +99,12 @@ package Language.Tokens {
 			
 		}
 
-
 		private function identify(s:String) : int{
 			if(dictionary.isToken(s)>=0)
+			{
+				//trace(s+"is a keyword!");
 				return tokenMapping[dictionary.isToken(s)];
+			}
 			else {
 				for(var typename in regularTypes){
 					//trace("testing [["+s+"]] for type "+tokenMapping[typename]+", index: "+tokenMapping[typename]);
@@ -131,62 +133,84 @@ package Language.Tokens {
 		}
 
 		public function nextToken():Token{
-			trace("start: "+code+", "+index+", ["+code.charAt(index)+"]");
+			//trace("start:");
+			locate();
 			scanIndex = index;
 			var current = "";
-			//if current character is invalid, check if it's a 
-			//keyword. If not, ignore it.
-			if(invalidCharacter(code.charAt(index))){
-				index++;
-				if(identify(code.charAt(index-1))>=0){
-					return tokenify(code.charAt(index-1));
-				}
-					
-			}
 
 			//skip invalid characters
 			while(lexicon[code.charAt(scanIndex)] == undefined && scanIndex < code.length){
 				//trace("skip "+code.charAt(scanIndex)+", next is ["+code.charAt(scanIndex+1)+"]");
+				locate();
+				index++;
 				scanIndex++;
 			}
+			
+			//handle strings
+			if(code.charAt(scanIndex)=='\"'){
+				current+="\"";
+				scanIndex++;
+				while(code.charAt(scanIndex)!='\"'){
+					current+=code.charAt(scanIndex);
+					scanIndex++;
+				}
+				current+="\"";
+				scanIndex++;
+				var out = tokenify(current);
+				if(out==null)
+					//trace("ERROR: UNFINSIHED STRING "+current);
+				index = scanIndex;
+				return out;
+			}
+
 			//parse until the next invalid character
 				//trace((invalidCharacter(code.charAt(scanIndex)))+", "+(scanIndex<code.length));
 			while(!invalidCharacter(code.charAt(scanIndex))&&scanIndex < code.length){
-				//trace("append");
+				locate();
 				//trace((invalidCharacter(code.charAt(scanIndex)))+", "+(scanIndex<code.length));
 				current+=code.charAt(scanIndex);
 				scanIndex++;
 			}
 
 			var out = tokenify(current);
+			//trace("Tokenify result "+out);
 			if(out!=null){
-				trace("Moving index! Found "+out.getSymbol() +", "+scanIndex+", "+index+", "+code.length);
+				//trace("Moving index! Found "+out.getSymbol() +", scan  "+scanIndex+", index "+index+", "+code.length);
+				locate();
 				index = scanIndex;
+				locate();
+				//trace("finish: "+code+", index "+index+", character ["+code.charAt(index)+"]");
 			}
 			else {
 				lastError = "INVALID TOKEN: ["+current+"]";
-				trace(lastError);
+				//trace(lastError);
 			}
 			return out;
 		}
 		
 		private function tokenify(s:String){
 			if(s.length <= 0) return null;
+			locate();
 			var type = identify(s);
 			if(type > 0){
-				trace("Returning new token, type "+tokenMapping[type]+", string "+s);
+				//trace("Returning new token, type "+tokenMapping[type]+", string "+s);
 				return new Token(tokenMapping[type],s);
 			}
 			if(identify(s)==0){
-				trace("Returning new token, type "+tokenMapping[type]+", string "+s);
+				//trace("Returning new token, type "+tokenMapping[type]+", position "+index+",character "+code.charAt(index)+", string "+s);
+				locate();
 				return new Token(s,s);
 			}
 			
-			//trace("backtrack! "+s+", scanindex at "+scanIndex);
 			//no valid token found; backtrack one character and try again.
 			scanIndex--;
 			return tokenify(s.substring(0,scanIndex-index));		
 		}
+		public function locate():String
+		{
+			return code.substring(0,index)+"["+code.substring(index, scanIndex+1)+"]"+code.substring(scanIndex+1, code.length);
+		}
 	}
+
 }
 

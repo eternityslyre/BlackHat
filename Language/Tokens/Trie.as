@@ -22,7 +22,7 @@
 		}
 
 		public function isSubstring(s:String, index:int = 0){
-			if(s.length == index)
+			if(s.length == index )
 				return hasChildren;
 			if(children[s.charAt(index)] == null)
 				return false;
@@ -30,7 +30,7 @@
 		}
 		
 		public function add(s:String, tokentype:int, index:int = 0){
-			if(index == s.length)
+			if(index  == s.length)
 				type = tokentype;
 			else {
 				var character:String = s.charAt(index);

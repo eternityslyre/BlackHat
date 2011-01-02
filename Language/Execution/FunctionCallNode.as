@@ -9,26 +9,33 @@
 *********************************************************************************/
 
 package Language.Execution {
-	public class IfElseNode extends ExecutionNode{
+	public class FunctionCallNode extends ExecutionNode {
 		//return type, default void
-		private var returnType:int = 0;
 		private var children:Array;
+		private var type:String;
+		private var scopeHandler:ScopeHandler;
+		private var arguments:Array;
+		private var functionName:String;
 
-		public function IfElseNode(lhs:String, args:Array)
+		public function FunctionCallNode(lhs:String, args:Array, scope:ScopeHandler)
 		{
 			super(lhs, args);
 			children = args;
+			scopeHandler = scope;
+			functionName = children[0].getSymbol();
+
 		}
 
-		//default implementation
 		public override function run():Object{
-			if(children[2].run() == true){
-				children[4].run();
+			//Case-by-case handling
+			// case function Function 
+			arguments = new Array();
+			if(children[2] is ArgumentsNode){
+				children[2].toArray(arguments);
 			}
-			else if (children.length>=6){
-				children[6].run();
-			}
-			return null;
+			var fromTable = scopeHandler.resolve(functionName)
+			var out = fromTable(arguments);
+			return out;
 		}
 	}
 }

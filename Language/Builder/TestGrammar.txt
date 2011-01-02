@@ -1,8 +1,22 @@
 Program->
-IfElse
+Statements
+
+Statements->
+Statement [Statements]
 
 Statement->
 IfElse
+Trace
 
 IfElse->
-if ( boolean ) { }
+if ( Expression ) { Statements }
+
+Trace->
+trace ( Expression ) ;
+
+Expression->
+Value
+
+Value->
+boolean
+string

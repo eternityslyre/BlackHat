@@ -45,10 +45,10 @@ package Language.Builder {
 				var switched:String = rule[i].replace(/(\r|\n)+/g,"$$$");
 				var sides = switched.split("->");
 				var derivation = switched.split("$$");
-				trace(sides)
+				//trace(sides)
 				derivation.shift();
 				derivation.pop();
-				trace(derivations[sides[0]]);
+				//trace(derivations[sides[0]]);
 				if(derivations[sides[0]]==undefined)
 					derivations[sides[0]] = new Array();
 				for(var j = 0; j < derivation.length; j++){
@@ -59,7 +59,7 @@ package Language.Builder {
 
 			//construct the symbol array
 			var symb:String;
-			allSymbolSet.printAll();
+			//allSymbolSet.printAll();
 			allSymbolSet.start();
 			while((symb = allSymbolSet.nextString()) != null){
 				allSymbols.push(symb);
@@ -73,14 +73,13 @@ package Language.Builder {
 			if(rhs.match(/^\/\//)) return;
 			if(rhs.match(/\[\S|\S\]/))
 			{
-				var matched = rhs.match(/\[\S+( \S+)*\]/);
-				trace("optional portion -"+matched+"- found, retrying...");
+				var matched = rhs.match(/\[\S+( \S+)*?\]/);
 				//remove first optional portion
-				var newRHS = rhs.replace(/\[(\S.*\S)\]/, "$1");
+				var newRHS = rhs.replace(/\[(\S(.*\S)*)\]/, "$1");
+				trace("recursing on "+newRHS);
 				recurseRule(lhs, newRHS);
 			}
-			var cleanedRHS = rhs.replace(/ ?\[\S+( \S+)*\]/g,"");
-			trace("cleaned version -"+cleanedRHS+"- is now being added...");
+			var cleanedRHS = rhs.replace(/ ?\[\S+( \S+)*?\]/g,"");
 			addRule(lhs, cleanedRHS, rules.length);
 		}
 
@@ -88,7 +87,7 @@ package Language.Builder {
 			if(derivations[lhs] == undefined)
 				derivations[lhs] = new Array();
 			var ruletext = lhs+" -> "+rhs;
-			trace("adding rule: ["+ruletext+"] number "+(ruleindex));
+			//trace("adding rule: ["+ruletext+"] number "+(ruleindex));
 			if(ruleindex < 0 ) 
 				ruleindex = rules.length;
 			rules[ruleindex] = ruletext;
@@ -98,7 +97,7 @@ package Language.Builder {
 			for(var k = 0; k < symbols.length; k++){
 				if(symbols[k].length < 1)
 					continue;
-				trace("adding "+symbols[k]+" to symbol set");
+				//trace("adding "+symbols[k]+" to symbol set");
 				allSymbolSet.addString(symbols[k]);
 			}
 

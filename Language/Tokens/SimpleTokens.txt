@@ -11,15 +11,26 @@ if
 else
 {
 }
+<
+>
+<=
+>=
+==
+!=
+while
+for
+var
+function
+,
 
 number:
-/^\d+(.\d+)?$/
+/^\d+(\.\d+)?$/
 
 boolean:
 /^(true|false)$/
 
 string:
-/^".*"$/
+/^"[^"]*"$/
 
 variable:
 /^(_|\w|\d)+$/

@@ -13,24 +13,25 @@ package Language {
 		private var token:TokenParser;
 		private var stack:Array;
 		private var executionTree:Array;
-		private var variables:Object;
+		private var scopeHandler:ScopeHandler;
 		private var grammar:Grammar;
 		private var callback:Function;
+		private var error:Boolean;
+		private var errorString:String;
 		
 		public function Parser(grammarFile:String, tokenFile:String, lexicon:String, call:Function){
 			grammar = new Grammar(grammarFile, catchCall);
 			token = new TokenParser(tokenFile, lexicon, catchCall);
-			variables = new Object();
 			callback = call;
 		}
 
 		private var called:int = 0;
 		private function catchCall(){
-			//trace("hihi");
 			called++;
 			if(called>1){
 				var builder:TableBuilder = new TableBuilder();
 				table = builder.Build(grammar);
+				builder.printAll(grammar);
 				callback.call();
 			}
 			else {
@@ -38,7 +39,8 @@ package Language {
 		}
 
 		public function parseString(input:String):ExecutionNode {
-			//trace("BEGIN PARSE");
+			error = false;
+			scopeHandler = new ScopeHandler();
 			stack = new Array();
 			executionTree = new Array();
 			stack.push("ZZ");
@@ -50,40 +52,40 @@ package Language {
 				var s = next.getType();
 				//get state
 				var state:int = stack.pop();
-				//build the execution stack
-				trace("State "+state+", Symbol "+s);
-				//trace("EXECUTION STACK");
-				for(var t in executionTree)
-				{
-					//trace(executionTree[t]);
-				}
-				//trace("END STACK");
+				//trace("state "+state+", token "+s);
 				if(table[state][s]==null){
-					trace("UNEXPECTED TOKEN: "+s);
+					error = true;
+					trace("SYNTAX ERROR: "+"type "+s+", symbol "+next.getSymbol());
+					trace("possible values: ");
+					for( var s in table[state])
+					{
+						trace(s);
+					}
 					return null;
 				}
+				//move scope
 				switch(table[state][s].charAt(0)){
 					case "s":
-						trace("Shift "+table[state][s].substring(1,table[state][s].length)+", "+s);
 						stack.push(state);
 						stack.push(next);
 						executionTree.push(next);
 						stack.push(table[state][s].substring(1,table[state][s].length));
 						next = token.nextToken();
-						trace("next token is "+next.getSymbol());
+						if(next.getSymbol() == "{")
+						{
+							scopeHandler.enterScope();
+						}
 					break;
 					case "r":
 						//construct a node from what we have here.
 						var rule = grammar.getRule(int(table[state][s].substring(1,table[state][s].length)));
-						trace("rule number: "+int(table[state][s].substring(1,table[state][s].length)))
-						trace("Reduce with rule "+rule);
+						//trace("reduce with rule "+rule);
 						var productions = rule.getProductions();
 						var args = new Array();
 						var stackArgs = new Array();
 						for(var i in productions){
 							if(executionTree.length>0){
 								var popped = executionTree.pop();
-								trace("popping from execution: "+popped);
 								args.push(popped);
 							}
 							stackArgs.push(stack.pop());
@@ -92,19 +94,27 @@ package Language {
 						var newtoken = new Token(rule.getLHS(), rule.getLHS());
 						stack.push(state);
 						stack.push(newtoken);
-						//placeholders.
+						//trace("last state "+state+" GOTO: "+table[state][newtoken.getType()].substring(1,table[state][newtoken.getType()].length));
 						stack.push(table[state][newtoken.getType()].substring(1,table[state][newtoken.getType()].length))
+
 						//reverse the stacks
 						stackArgs.reverse();
 						args.reverse();
-						executionTree.push(makeNode(rule.getLHS(),args, stackArgs));
+						var newNode = makeNode(rule.getLHS(),args, stackArgs);
+						if(newNode.error){
+							trace("Terminating compilation on error: "+newNode.errorString);
+							error = true;
+							return null;
+						}
+						executionTree.push(newNode);
 					break;
 					//accept case
 					case "a":
-						//finish!
-						trace("Accepted!");
-						return executionTree.pop();
+						var tree = executionTree.pop();
+						tree.precedenceSort(tree);
+						return tree;
 					default:
+						error = true;
 						trace("SYNTAX ERROR: "+s.getSymbol());
 						return null;
 				}
@@ -114,25 +124,19 @@ package Language {
 			
 		}
 
+		public function currentPosition():String
+		{
+			return token.locate();
+		}
+
+		public function succeeded()
+		{
+			return !error;
+		}
+
 		private function makeNode(lhs:String, args:Array, stackArgs:Array){
-			trace("Making a node for "+lhs);
-			//trace("Stack Arguments provided:");
-			for(var a in stackArgs){
-			//	if(stackArgs[a] is Token) trace(stackArgs[a].getSymbol());
-			//	else trace(stackArgs[a]);
-			}
-			//trace("Execution Arguments provided:");
-			for(var a in args){
-			//	trace(args[a]);
-			}
 			switch(lhs){
 				/*
-				case "ForLoop":
-					return new ForLoopNode(args);
-				break;
-				case "WhileLooop":
-					return new WhileLoopNode(args);
-				break;
 				case "IfClause":
 					return new IfClause(args);
 					break;
@@ -163,20 +167,39 @@ package Language {
 					return new FunctionReturnNode(args);
 				break;
 				*/
+				case "ControlFlow":
+					return new ControlFlowNode(lhs, args, scopeHandler);
+				case "FunctionCall":
+					return new FunctionCallNode(lhs, args, scopeHandler);
+				case "Function":
+					return new FunctionNode(lhs, args, scopeHandler);
+				case "Arguments":
+					return new ArgumentsNode(lhs, args, scopeHandler);
+				case "Parameters":
+					return new ParametersNode(lhs, args, scopeHandler);
+				case "Declaration":
+					return new DeclarationNode(lhs,args, scopeHandler);
+				case "ForLoop":
+					return new ForLoopNode(lhs, args);
 				case "InfixOp":
 					return new InfixOpNode(lhs, args, stackArgs);
-				break;
 				case "Expression":
 					return new ExpressionNode(lhs, args);
-				break;
 				case "Value":
 				case "variable":
 				case "number":
-					return new ValueNode(lhs, args, stackArgs, variables);
-				break;
+					return new ValueNode(lhs, args, stackArgs, scopeHandler);
 				case "Trace":
 					return new TraceNode(lhs, args);
-				break;
+				case "IfElse":
+					return new IfElseNode(lhs, args);
+				case "WhileLoop":
+					return new WhileLoopNode(lhs, args);
+				case "Block":
+					//scopeHandler.enterScope();
+					var out = new ExecutionNode(lhs, args);	
+					scopeHandler.exitScope();
+					return out;
 				default:
 					return new ExecutionNode(lhs, args);
 

@@ -9,15 +9,32 @@
 *********************************************************************************/
 
 package Language.Execution {
-	public class WhileLoopNode {
+	public class WhileLoopNode extends ExecutionNode{
 		//return type, default void
 		private var returnType:int = 0;
 		private var children:Array;
+
+		public function WhileLoopNode(lhs:String, args:Array)
+		{
+			super(lhs, args);
+			children = args;
+		}
 		
-		public function run():Object{
-			if(Boolean(Conditional.run())){
-				Statements.run();
+		public override function run():Object{
+			var iter = 0;
+			while(Boolean(children[2].run())){
+				if(error){
+					trace("terminating on error: "+errorString);
+					return null;
+				}
+				children[4].run();
+				if(iter>100)
+				{
+					throwError("You ran too long.");
+				}
+				iter++;
 			}
+			return null;
 		}
 	}
 }
