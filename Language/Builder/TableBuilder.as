@@ -181,15 +181,16 @@ package Language.Builder {
 					queue.push(states[next]);
 					queue.push(next);
 					if(newRule.complete()){
-						trace("STATE "+next+" ACCEPTS "+symb+" to complete rule: "+newRule.getAnnotatedForm()+" number "+newRule.getRuleNumber());
+						//trace("STATE "+next+" ACCEPTS "+symb+" to complete rule: "+newRule.getAnnotatedForm()+" number "+newRule.getRuleNumber());
 						//EVERY ACTION MUST RESULT IN A REDUCE!
 						var symset = grammar.getSymbolSet();
 						//THE END!!
 						if(newRule.getRuleNumber() != 0){
 							for(var s in symset){
 								var original = actionTable[next][symset[s]];
-								if(original !== undefined)
-									trace("replacing "+original+" with "+"r"+newRule.getRuleNumber());
+								if(original !== undefined){
+									//trace("replacing "+original+" with "+"r"+newRule.getRuleNumber());
+								}
 								if(actionTable[next][symset[s]]!= undefined){
 									trace("OVERWRITING A SHIFT RUEL!!:!");
 									trace("state "+next+", symbol "+symset[s]+",  original rule "+actionTable[next][symset[s]]);
@@ -212,7 +213,7 @@ package Language.Builder {
 				ruleStateMap[newRule.getAnnotatedForm()] = stateMap[lastID][symb];
 				var next = stateMap[lastID][symb];
 				if(newRule.complete()){
-					trace("STATE "+next+" ACCEPTS "+symb+" to complete rule: "+newRule.getAnnotatedForm()+" number "+newRule.getRuleNumber());
+					//trace("STATE "+next+" ACCEPTS "+symb+" to complete rule: "+newRule.getAnnotatedForm()+" number "+newRule.getRuleNumber());
 					//EVERY ACTION MUST RESULT IN A REDUCE!
 					var symset = grammar.getSymbolSet();
 					//THE END!!
@@ -220,7 +221,9 @@ package Language.Builder {
 						for(var s in symset){
 							var original = actionTable[next][symset[s]];
 							if(original !== undefined)
-							trace("replacing "+original+" with "+"r"+newRule.getRuleNumber());
+							{
+								//trace("replacing "+original+" with "+"r"+newRule.getRuleNumber());
+							}
 							if(actionTable[next][symset[s]]!= undefined){
 								trace("OVERWRITING A SHIFT RUEL!!:!");
 								trace("state "+next+", symbol "+symset[s]+",  original rule "+actionTable[next][symset[s]]);
@@ -240,8 +243,8 @@ package Language.Builder {
 				queue.push(stateMap[lastID][symb]);
 			}
 			var original = actionTable[lastID][symb];
-			if(original !== undefined && original != "s"+stateMap[lastID][symb])
-				trace("replacing "+original+" with "+"s"+stateMap[lastID][symb]);
+			//if(original !== undefined && original != "s"+stateMap[lastID][symb])
+				//trace("replacing "+original+" with "+"s"+stateMap[lastID][symb]);
 			actionTable[lastID][symb] = "s"+stateMap[lastID][symb];
 		}
 

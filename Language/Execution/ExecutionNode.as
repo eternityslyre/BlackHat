@@ -22,10 +22,19 @@ package Language.Execution {
 		//return type, default void
 		private var returnType:int = TYPE_VOID;
 		private var children:Array;
-		private var name:String;
-		public var parent:ExecutionNode;
+		
+		//flag for execution complete
+		public var complete:Boolean;
+		private var cycle:int;
+		private var scopeHandler:ScopeHandler;
+
+		//Error reporting
 		public var error:Boolean;
 		public var errorString:String;
+
+		//used for tree printing
+		private var name:String;
+		public var parent:ExecutionNode;
 
 		public function ExecutionNode(lhs:String, args:Array)
 		{
@@ -34,6 +43,7 @@ package Language.Execution {
 			name = lhs;
 			error = false;
 			errorString = "";
+			cycle = 0;
 
 			if(args.length < 1)
 				return;
@@ -56,6 +66,28 @@ package Language.Execution {
 			return null; 
 		}
 
+		public function execute()
+		{
+			if(error){
+				trace("ERROR: "+errorString);
+				return;
+			}
+			if(complete)
+				return;
+			
+
+
+		}
+	
+		public function tick(count:int=1)
+		{
+			cycle+=count;
+			if(maxCycle>0 && cycle >= maxCycle)
+			{
+				complete = true;
+			}
+		}
+
 		public function throwError(errString:String)
 		{
 			if(error) return;
@@ -74,6 +106,22 @@ package Language.Execution {
 			}
 		}
 
+		private function executeFirst():Object{
+			var out = null;
+			for(var child in children)
+			{
+				if(children[child] is ExecutionNode)
+				{
+					if(error){
+						trace("ERROR: "+errorString);
+						return null;
+					}
+					out = children[child].execute();
+				}
+			}
+			return out;
+		}
+
 		private function runFirst():Object{
 			var out = null;
 			for(var child in children)
@@ -88,21 +136,6 @@ package Language.Execution {
 				}
 			}
 			return out;
-		}
-
-		public function setParent(par:ExecutionNode)
-		{
-			parent = par;
-			if(error)
-				throwError(errorString);
-		}
-
-		private function getName():String{
-			return name;
-		}
-
-		public function printData():String{
-			return ""+children;
 		}
 
 		private function getChildren():Array
@@ -120,6 +153,38 @@ package Language.Execution {
 			returnType = type;
 		}
 
+		/* This is a top level method used 
+		* to keep track of cycles run and 
+		* error states. */
+		public function execute():Number 
+		{
+			var sum = 0;
+			for(var child in children)
+			{
+				if(children[child] is ExecutionNode)
+				{
+					if(error){
+						trace("ERROR: "+errorString);
+						return 0;
+					}
+					sum += children[child].execute();
+				}
+			}
+			return sum;
+		}
+
+		public function setScope(scope:ScopeHandler)
+		{
+			scopeHandler = scope;
+		}
+
+		public function attachScope(scope:Object)
+		{
+			if(scopeHandler!=null)
+			scopeHandler.enterObjectScope(scope);
+		}
+
+/************************* TREE SORTING FUNCTIONALITY, FOR EXPRESSION SORTING **********/
 		public function swapNodes(current:ExecutionNode, replace:ExecutionNode)
 		{
 			for(var child in children)
@@ -147,6 +212,24 @@ package Language.Execution {
 		public function setChild(index:int, arg:ExpressionNode)
 		{
 			children[index] = arg;
+		}
+
+
+
+/***************** TREE PRINTING FUNCTIONALITY, FOR DEBUG USE *********************/
+		private function getName():String{
+			return name;
+		}
+
+		public function printData():String{
+			return ""+children;
+		}
+
+		public function setParent(par:ExecutionNode)
+		{
+			parent = par;
+			if(error)
+				throwError(errorString);
 		}
 
 		public function printTree(recurse:String = ""){

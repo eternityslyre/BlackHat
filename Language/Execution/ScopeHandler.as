@@ -4,11 +4,13 @@
 *********************************************************************/
 package Language.Execution
 {
+	import flash.display.*;
 	public class ScopeHandler
 	{
 		private var stack:Array;
 		private var scope:int;
 		private var err:Boolean;
+		private var attachedObject:Object;
 
 		public function ScopeHandler()
 		{
@@ -20,7 +22,29 @@ package Language.Execution
 
 		public function assign(arg:Object, identifier:String, type:String)
 		{
+			var currentScope = scope;
+			err = false;
+			var out;
+			if(attachedObject != null)
+			{
+				out = attachedObject[identifier];
+				if(typeof(out)==type)
+				{
+					attachedObject[identifier] = arg;
+				}
+				return;
+			}
+			while(currentScope >= 0 && out === undefined )
+			{
+				out = stack[currentScope].get(identifier, type);
+				currentScope--;
+			}
 			stack[scope].set(arg, identifier, type);
+			if(out === undefined)
+			{
+				err = true;
+				trace("sad");
+			}
 		}
 
 
@@ -39,6 +63,12 @@ package Language.Execution
 			var out;
 			var currentScope = scope;
 			err = false;
+			if(attachedObject != null)
+			{
+				out = attachedObject[identifier];
+				if(expectedType==null || typeof(out)==expectedType)
+					return out;
+			}
 			while(currentScope >= 0 && out === undefined )
 			{
 				out = stack[currentScope].get(identifier, expectedType);
@@ -61,6 +91,12 @@ package Language.Execution
 		{
 			var out;
 			var type;
+			if(attachedObject != null)
+			{
+				out = attachedObject[identifier];
+				if(out!==undefined)
+				return typeof(out);
+			}
 			var currentScope = scope;
 			while(currentScope >= 0 && out === undefined )
 			{
@@ -88,5 +124,12 @@ package Language.Execution
 			stack.pop();
 			scope--;
 		}
+
+		public function enterObjectScope(obj:Object)
+		{
+			attachedObject = obj;
+		}
+
+
 	}
 }

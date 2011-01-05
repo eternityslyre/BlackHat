@@ -18,6 +18,7 @@ package Language {
 		private var callback:Function;
 		private var error:Boolean;
 		private var errorString:String;
+		private var printOutput:Function;
 		
 		public function Parser(grammarFile:String, tokenFile:String, lexicon:String, call:Function){
 			grammar = new Grammar(grammarFile, catchCall);
@@ -31,16 +32,23 @@ package Language {
 			if(called>1){
 				var builder:TableBuilder = new TableBuilder();
 				table = builder.Build(grammar);
-				builder.printAll(grammar);
+				//builder.printAll(grammar);
 				callback.call();
 			}
 			else {
 			}
 		}
 
-		public function parseString(input:String):ExecutionNode {
+
+		public function setOutput(out:Function)
+		{
+			printOutput = out;
+		}
+
+		public function parseString(input:String, attachedScope:Object = null):ExecutionNode {
 			error = false;
 			scopeHandler = new ScopeHandler();
+			scopeHandler.enterObjectScope(attachedScope);
 			stack = new Array();
 			executionTree = new Array();
 			stack.push("ZZ");
@@ -56,6 +64,8 @@ package Language {
 				if(table[state][s]==null){
 					error = true;
 					trace("SYNTAX ERROR: "+"type "+s+", symbol "+next.getSymbol());
+					printOutput("SYNTAX ERROR: "+"type "+s+", symbol "+next.getSymbol());
+					printOutput(token.locateError());
 					trace("possible values: ");
 					for( var s in table[state])
 					{
@@ -103,6 +113,7 @@ package Language {
 						var newNode = makeNode(rule.getLHS(),args, stackArgs);
 						if(newNode.error){
 							trace("Terminating compilation on error: "+newNode.errorString);
+							printOutput("Terminating compilation on error: "+newNode.errorString);
 							error = true;
 							return null;
 						}
@@ -112,6 +123,7 @@ package Language {
 					case "a":
 						var tree = executionTree.pop();
 						tree.precedenceSort(tree);
+						tree.setScope(scopeHandler);
 						return tree;
 					default:
 						error = true;
@@ -190,7 +202,7 @@ package Language {
 				case "number":
 					return new ValueNode(lhs, args, stackArgs, scopeHandler);
 				case "Trace":
-					return new TraceNode(lhs, args);
+					return new TraceNode(lhs, args, printOutput);
 				case "IfElse":
 					return new IfElseNode(lhs, args);
 				case "WhileLoop":

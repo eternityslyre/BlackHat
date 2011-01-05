@@ -76,7 +76,7 @@ package Language.Builder {
 				var matched = rhs.match(/\[\S+( \S+)*?\]/);
 				//remove first optional portion
 				var newRHS = rhs.replace(/\[(\S(.*\S)*)\]/, "$1");
-				trace("recursing on "+newRHS);
+				//trace("recursing on "+newRHS);
 				recurseRule(lhs, newRHS);
 			}
 			var cleanedRHS = rhs.replace(/ ?\[\S+( \S+)*?\]/g,"");
