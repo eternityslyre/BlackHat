@@ -66,7 +66,9 @@ package Language.Execution
 			if(attachedObject != null)
 			{
 				out = attachedObject[identifier];
-				if(expectedType==null || typeof(out)==expectedType)
+				trace("Our external scope finds: "+out);
+				if(out != null && 
+					(expectedType==null || typeof(out)==expectedType))
 					return out;
 			}
 			while(currentScope >= 0 && out === undefined )

@@ -26,11 +26,15 @@ package Language.Execution {
 		//flag for execution complete
 		public var complete:Boolean;
 		private var cycle:int;
+		private var maxCycle:int = -1;
 		private var scopeHandler:ScopeHandler;
 
 		//Error reporting
 		public var error:Boolean;
 		public var errorString:String;
+
+		//profiler
+		public var profiler:Profiler;
 
 		//used for tree printing
 		private var name:String;
@@ -66,25 +70,47 @@ package Language.Execution {
 			return null; 
 		}
 
-		public function execute()
+		public function setMaxCycle(max:int)
 		{
-			if(error){
-				trace("ERROR: "+errorString);
-				return;
-			}
-			if(complete)
-				return;
-			
-
-
+			profiler = new Profiler();
+			profiler.setMaxCycle(max);
+			setProfiler(profiler);
 		}
-	
-		public function tick(count:int=1)
+
+		private function setProfiler(prof:Profiler)
 		{
-			cycle+=count;
-			if(maxCycle>0 && cycle >= maxCycle)
+			profiler = prof;
+			if(children.length>0)
 			{
-				complete = true;
+				for(var child in children)
+				{
+					if(children[child] is ExecutionNode)
+						children[child].setProfiler(prof);
+				}
+			}
+		}
+
+		public function fullName():String
+		{
+			var out = name;
+			if(parent!= null)
+			{
+				out = parent.fullName() +"." + out;
+			}
+			return out;
+		}
+
+		//Function calls can be rerun!
+		public function reset()
+		{
+			complete = false;
+			if(children.length>0)
+			{
+				for(var child in children)
+				{
+					if(children[child] is ExecutionNode)
+						children[child].reset();
+				}
 			}
 		}
 
@@ -106,24 +132,14 @@ package Language.Execution {
 			}
 		}
 
-		private function executeFirst():Object{
-			var out = null;
-			for(var child in children)
-			{
-				if(children[child] is ExecutionNode)
-				{
-					if(error){
-						trace("ERROR: "+errorString);
-						return null;
-					}
-					out = children[child].execute();
-				}
-			}
-			return out;
-		}
-
 		private function runFirst():Object{
 			var out = null;
+			if(name=="Statement" && profiler != null)
+			{
+				profiler.tick(fullName());
+				if(profiler.exceeded())
+					throwError("Maximum execution time execeeded.");
+			}
 			for(var child in children)
 			{
 				if(children[child] is ExecutionNode)
@@ -135,6 +151,7 @@ package Language.Execution {
 					out = children[child].run();
 				}
 			}
+			complete = true;
 			return out;
 		}
 
@@ -148,29 +165,15 @@ package Language.Execution {
 			return returnType;
 		}
 
+		public function report():String
+		{
+			if(profiler == null) return "";
+			return profiler.report();
+		}
+
 		public function setReturnType(type:int)
 		{
 			returnType = type;
-		}
-
-		/* This is a top level method used 
-		* to keep track of cycles run and 
-		* error states. */
-		public function execute():Number 
-		{
-			var sum = 0;
-			for(var child in children)
-			{
-				if(children[child] is ExecutionNode)
-				{
-					if(error){
-						trace("ERROR: "+errorString);
-						return 0;
-					}
-					sum += children[child].execute();
-				}
-			}
-			return sum;
 		}
 
 		public function setScope(scope:ScopeHandler)
@@ -237,7 +240,7 @@ package Language.Execution {
 				trace(recurse+"+--"+getName()+" LEAF: "+printData());
 			}
 			else{
-				trace(recurse+"+--"+getName()+": "+printData());
+				trace(recurse+"+--"+getName()+": "+printData()+" cycle "+cycle);
 			}
 			for(var i =0;i<children.length;i++){
 				if(children[i] is Token){

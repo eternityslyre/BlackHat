@@ -28,7 +28,7 @@ package Language.Execution {
 					return null;
 				}
 				children[4].run();
-				if(iter>100)
+				if(iter>1000000)
 				{
 					throwError("You ran too long.");
 				}

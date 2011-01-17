@@ -26,6 +26,7 @@ package Language.Execution {
 		{
 			trace("TRACE: "+children[2].run());
 			printOutput(children[2].run());
+			complete = true;
 			return null;
 		}
 	}
