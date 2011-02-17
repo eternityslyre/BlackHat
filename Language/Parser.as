@@ -36,6 +36,7 @@ package Language {
 				callback.call();
 			}
 			else {
+				trace("hi!");
 			}
 		}
 
