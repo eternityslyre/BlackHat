@@ -1,4 +1,4 @@
-/******************************************************************************************************
+﻿/******************************************************************************************************
 * This is the Syntax Parsing class, which reads in the action table, and then reads in the code file
 * (or a string, provided by the user) and returns the execution tree. It does not execute the tree,
 * for modularity purposes.
@@ -67,9 +67,9 @@ package Language {
 					printOutput("SYNTAX ERROR: "+"type "+s+", symbol "+next.getSymbol());
 					printOutput(token.locateError());
 					trace("possible values: ");
-					for( var s in table[state])
+					for( var s2 in table[state])
 					{
-						trace(s);
+						trace(s2);
 					}
 					return null;
 				}

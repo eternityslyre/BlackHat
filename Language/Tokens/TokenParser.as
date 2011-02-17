@@ -59,10 +59,10 @@ package Language.Tokens {
 				//trace("adding "+types[0].charAt(i));
 				lexicon[types[0].charAt(i)] = true;
 			}
-			for(var i = 0; i < types[1].length; i++){
+			for(var j = 0; j < types[1].length; j++){
 				//trace("adding "+types[1].charAt(i));
-				lexicon[types[1].charAt(i)] = true;
-				punctuation[types[1].charAt(i)] = true;
+				lexicon[types[1].charAt(j)] = true;
+				punctuation[types[1].charAt(j)] = true;
 			}
 			lexicon["$"] = true;
 			tryParse();
@@ -158,12 +158,12 @@ package Language.Tokens {
 				}
 				current+="\"";
 				scanIndex++;
-				var out = tokenify(current);
-				if(out==null)
+				var outToken = tokenify(current);
+				if(outToken==null)
 					//trace("ERROR: UNFINSIHED STRING "+current);
 				lastIndex = index;
 				index = scanIndex;
-				return out;
+				return outToken;
 			}
 
 			//parse until the next invalid character
