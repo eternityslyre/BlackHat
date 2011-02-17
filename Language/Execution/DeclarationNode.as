@@ -9,25 +9,36 @@
 *********************************************************************************/
 
 package Language.Execution {
-	public class IfElseNode extends ExecutionNode{
+	import Language.Tokens.*;
+	public class DeclarationNode extends ExecutionNode {
 		//return type, default void
-		private var returnType:int = 0;
 		private var children:Array;
+		private var type:String;
+		private var scopeHandler:ScopeHandler;
 
-		public function IfElseNode(lhs:String, args:Array)
+		public function DeclarationNode(lhs:String, args:Array, scope:ScopeHandler)
 		{
 			super(lhs, args);
 			children = args;
+			scopeHandler = scope;
+			if(children[1] is Token)
+				scopeHandler.define(children[1].getSymbol());
 		}
 
-		//default implementation
 		public override function run():Object{
-			if(children[2].run() == true){
-				children[4].run();
+			//Case-by-case handling
+
+			// case "var x ;"
+			var rhs = null;
+			var innerType = "null";
+			var variableName = children[1].getSymbol();
+			// case var x = Expression ;
+			if(children.length > 3)
+			{
+				rhs = children[3].run();
+				innerType = children[3].getType();
 			}
-			else if (children.length>=6){
-				children[6].run();
-			}
+			scopeHandler.createAndAssign(rhs, variableName, innerType);
 			return null;
 		}
 	}

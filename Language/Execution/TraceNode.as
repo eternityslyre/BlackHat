@@ -13,16 +13,20 @@ package Language.Execution {
 		//return type, default void
 		private var returnType:int = 0;
 		private var children:Array;
+		private var printOutput:Function;
 
-		public function TraceNode(lhs:String, args:Array)
+		public function TraceNode(lhs:String, args:Array, outputFunc:Function)
 		{
 			super(lhs, args);
 			children = args;
+			printOutput = outputFunc;
 		}
 
 		public override function run():Object
 		{
 			trace("TRACE: "+children[2].run());
+			printOutput(children[2].run());
+			complete = true;
 			return null;
 		}
 	}

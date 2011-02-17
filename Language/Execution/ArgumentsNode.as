@@ -9,25 +9,33 @@
 *********************************************************************************/
 
 package Language.Execution {
-	public class IfElseNode extends ExecutionNode{
+	public class ArgumentsNode extends ExecutionNode {
 		//return type, default void
-		private var returnType:int = 0;
 		private var children:Array;
+		private var type:String;
+		private var scopeHandler:ScopeHandler;
+		private var arguments:Array;
 
-		public function IfElseNode(lhs:String, args:Array)
+		public function ArgumentsNode(lhs:String, args:Array, scope:ScopeHandler)
 		{
 			super(lhs, args);
 			children = args;
+			scopeHandler = scope;
 		}
 
-		//default implementation
+		public function toArray(arr:Array)
+		{
+			if(children.length>1){
+				arr.push(children[2]);
+				children[0].toArray(arr);
+			}
+			else arr.push(children[0]);
+		}
+
 		public override function run():Object{
-			if(children[2].run() == true){
-				children[4].run();
-			}
-			else if (children.length>=6){
-				children[6].run();
-			}
+			//Case-by-case handling
+			// case function Function 
+			scopeHandler.enterScope(arguments);
 			return null;
 		}
 	}

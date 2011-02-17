@@ -9,26 +9,28 @@
 *********************************************************************************/
 
 package Language.Execution {
-	public class IfElseNode extends ExecutionNode{
+	import Language.Tokens.*;
+	public class ControlFlowNode extends ExecutionNode {
 		//return type, default void
-		private var returnType:int = 0;
 		private var children:Array;
+		private var type:String;
+		private var scopeHandler:ScopeHandler;
 
-		public function IfElseNode(lhs:String, args:Array)
+		public function ControlFlowNode(lhs:String, args:Array, scope:ScopeHandler)
 		{
 			super(lhs, args);
 			children = args;
+			scopeHandler = scope;
 		}
 
-		//default implementation
 		public override function run():Object{
-			if(children[2].run() == true){
-				children[4].run();
+			// case function Function 
+			if(children.length == 2 && children[1] is FunctionNode){
+				scopeHandler.createAndAssign(children[1].getMethod(), children[1].getMethodName(), "function");
+				return null;
 			}
-			else if (children.length>=6){
-				children[6].run();
-			}
-			return null;
+			else
+				return children[0].run();
 		}
 	}
 }

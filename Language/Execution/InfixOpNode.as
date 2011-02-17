@@ -25,8 +25,13 @@ package Language.Execution {
 
 		}
 
+		public function getOp():String
+		{
+			return operation;
+		}
 
-		public function operate(lhs:ValueNode, rhs:ExpressionNode):Object
+
+		public function operate(lhs:ExpressionNode, rhs:ExpressionNode):Object
 		{
 			return operations[operation][lhs.getType()][rhs.getType()](lhs, rhs);
 		}
@@ -35,7 +40,6 @@ package Language.Execution {
 		//hooray, hard-coded list of operations!
 		private static function initOperations()
 		{
-
 			operations = {
 				"+": {
 					"string": {
@@ -52,14 +56,31 @@ package Language.Execution {
 						"number": function(lhs, rhs) { return Number(lhs.run()) + Number(rhs.run()) },
 						"variable": 
 							function(lhs, rhs) {
-								return operations["+"][lhs.getType()][rhs.getType()](lhs, rhs); 
+								return operations["+"][lhs.innerType()][rhs.innerType()](lhs, rhs); 
 								}
+					},
+					"null": { 
+						"string": function(lhs, rhs) { this.throwError("CANNOT ADD NULL"); },
+						"number": function(lhs, rhs) { this.throwError("CANNOT ADD NULL"); },
+						"variable": function(lhs, rhs) { this.throwError("CANNOT ADD NULL"); }
 					}
 				},
 				"-": {
 					"number": {
 						"number": function(lhs, rhs) { return Number(lhs.run()) - Number(rhs.run()); },
 						"variable": function(lhs, rhs) { return Number(lhs.run()) - Number(rhs.run()) } 
+					},
+					"variable": {
+						"number": function(lhs, rhs) { return Number(lhs.run()) - Number(rhs.run()); },
+						"variable": 
+							function(lhs, rhs) {
+								return operations["-"][lhs.innerType()][rhs.innerType()](lhs, rhs); 
+								}
+					},
+					"null": { 
+						"string": function(lhs, rhs) { this.throwError("CANNOT SUBTRACT NULL"); },
+						"number": function(lhs, rhs) { this.throwError("CANNOT SUBTRACT NULL"); },
+						"variable": function(lhs, rhs) { this.throwError("CANNOT SUBTRACT NULL"); }
 					}
 				},
 				"*": {
@@ -73,18 +94,142 @@ package Language.Execution {
 							function(lhs, rhs) {
 								return operations["*"][lhs.innerType()][rhs.innerType()](lhs, rhs); 
 								}
+					},
+					"null": { 
+						"string": function(lhs, rhs) { this.throwError("CANNOT MULTIPLY NULL"); },
+						"number": function(lhs, rhs) { this.throwError("CANNOT MULTIPLY NULL"); },
+						"variable": function(lhs, rhs) { this.throwError("CANNOT MULTIPLY NULL"); }
 					}
 				},
 				"=": {
 					"variable": {
-						"string": function(lhs, rhs) { return lhs.assign(String(rhs.run())); },
-						"number": function(lhs, rhs) { return lhs.assign(Number(rhs.run())); },
+						"string": function(lhs, rhs) { return lhs.assign(String(rhs.run()), "string"); },
+						"number": function(lhs, rhs) { return lhs.assign(Number(rhs.run()), "number"); },
 						"variable": 
 							function(lhs, rhs) {
-								lhs.assign(rhs.run());
+								lhs.assign(rhs.run(),rhs.innerType());
 								}
 					}
+				},
+				"==": {
+					"boolean": {
+						"boolean": function(lhs, rhs) { return Boolean(lhs.run()) == Boolean(rhs.run()); },
+						"variable": function(lhs, rhs) { return Boolean(lhs.run()) == Boolean(rhs.run()); }
+					},
+					"string": {
+						"string": function(lhs, rhs) { return String(lhs.run()).localeCompare(String(rhs.run()))==0; },
+						"variable": function(lhs, rhs) { return String(lhs.run()).localeCompare(String(rhs.run()))==0; }
+					},
+					"number": {
+						"number": function(lhs, rhs) { return Number(lhs.run()) == Number(rhs.run()); },
+						"variable": function(lhs, rhs) { return Number(lhs.run()) == Number(rhs.run()) } 
+					},
+					"variable": {
+						"string": function(lhs, rhs) { return String(lhs.run()).localeCompare(String(rhs.run()))==0; },
+						"number": function(lhs, rhs) { return Number(lhs.run()) == Number(rhs.run()); },
+						"boolean": function(lhs, rhs) { return Number(lhs.run()) == Number(rhs.run()); },
+						"variable": 
+							function(lhs, rhs) {
+								return operations["=="][lhs.innerType()][rhs.innerType()](lhs,rhs);
+								}
+					}
+				},
+				"!=":{
+					"boolean": {
+						"boolean": function(lhs, rhs) { return Boolean(lhs.run()) != Boolean(rhs.run()); },
+						"variable": function(lhs, rhs) { return Boolean(lhs.run()) != Boolean(rhs.run()); }
+					},
+					"string": {
+						"string": function(lhs, rhs) { return String(lhs.run()).localeCompare(String(rhs.run()))!=0; },
+						"variable": function(lhs, rhs) { return !String(lhs.run()).localeCompare(String(rhs.run()))!=0; }
+					},
+					"number": {
+						"number": function(lhs, rhs) { return Number(lhs.run()) != Number(rhs.run()); },
+						"variable": function(lhs, rhs) { return Number(lhs.run()) != Number(rhs.run()) } 
+					},
+					"variable": {
+						"string": function(lhs, rhs) { return String(lhs.run()).localeCompare(String(rhs.run()))==0; },
+						"number": function(lhs, rhs) { return Number(lhs.run()) != Number(rhs.run()); },
+						"boolean": function(lhs, rhs) { return Number(lhs.run()) != Number(rhs.run()); },
+						"variable": 
+							function(lhs, rhs) {
+								return operations["!="][lhs.innerType()][rhs.innerType()](lhs,rhs);
+								}
+					}
+				},
+				"<": {
+					"number": {
+						"number": function(lhs, rhs) { return Number(lhs.run()) < Number(rhs.run()); },
+						"variable": function(lhs, rhs) { return Number(lhs.run()) < Number(rhs.run()) } 
+					},
+					"variable": {
+						"number": function(lhs, rhs) { return Number(lhs.run()) < Number(rhs.run()); },
+						"variable": 
+							function(lhs, rhs) {
+								return operations["<"][lhs.innerType()][rhs.innerType()](lhs, rhs); 
+								}
+					},
+					"null": { 
+						"string": function(lhs, rhs) { this.throwError("CANNOT COMPARE NULL"); },
+						"number": function(lhs, rhs) { this.throwError("CANNOT COMPARE NULL"); },
+						"variable": function(lhs, rhs) { this.throwError("CANNOT COMPARE NULL"); }
+					}
+				},
+				">":{
+					"number": {
+						"number": function(lhs, rhs) { return Number(lhs.run()) > Number(rhs.run()); },
+						"variable": function(lhs, rhs) { return Number(lhs.run()) > Number(rhs.run()) } 
+					},
+					"variable": {
+						"number": function(lhs, rhs) { return Number(lhs.run()) > Number(rhs.run()); },
+						"variable": 
+							function(lhs, rhs) {
+								return operations[">"][lhs.innerType()][rhs.innerType()](lhs, rhs); 
+								}
+					},
+					"null": { 
+						"string": function(lhs, rhs) { this.throwError("CANNOT COMPARE NULL"); },
+						"number": function(lhs, rhs) { this.throwError("CANNOT COMPARE NULL"); },
+						"variable": function(lhs, rhs) { this.throwError("CANNOT COMPARE NULL"); }
+					}
+				},
+				"<=":{
+					"number": {
+						"number": function(lhs, rhs) { return Number(lhs.run()) <= Number(rhs.run()); },
+						"variable": function(lhs, rhs) { return Number(lhs.run()) <= Number(rhs.run()) } 
+					},
+					"variable": {
+						"number": function(lhs, rhs) { return Number(lhs.run()) <= Number(rhs.run()); },
+						"variable": 
+							function(lhs, rhs) {
+								return operations["<="][lhs.innerType()][rhs.innerType()](lhs, rhs); 
+								}
+					},
+					"null": { 
+						"string": function(lhs, rhs) { this.throwError("CANNOT COMPRE NULL"); },
+						"number": function(lhs, rhs) { this.throwError("CANNOT COMPARE NULL"); },
+						"variable": function(lhs, rhs) { this.throwError("CANNOT COMPARE NULL"); }
+					}
+				},
+				">=":{
+					"number": {
+						"number": function(lhs, rhs) { return Number(lhs.run()) >= Number(rhs.run()); },
+						"variable": function(lhs, rhs) { return Number(lhs.run()) >= Number(rhs.run()) } 
+					},
+					"variable": {
+						"number": function(lhs, rhs) { return Number(lhs.run()) >= Number(rhs.run()); },
+						"variable": 
+							function(lhs, rhs) {
+								return operations[">="][lhs.innerType()][rhs.innerType()](lhs, rhs); 
+								}
+					},
+					"null": { 
+						"string": function(lhs, rhs) { this.throwError("CANNOT COMPRE NULL"); },
+						"number": function(lhs, rhs) { this.throwError("CANNOT COMPARE NULL"); },
+						"variable": function(lhs, rhs) { this.throwError("CANNOT COMPARE NULL"); }
+					}
 				}
+
 			};
 
 

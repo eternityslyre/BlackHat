@@ -9,43 +9,46 @@
 *********************************************************************************/
 
 package Language.Execution {
-	public class ValueNode extends ExecutionNode {
+	public class ValueNode extends ExpressionNode {
 		//return type, default void
-		private var returnType:int = 0;
-		private var variables:Object;
 		private var number:Number;
 		private var string:String;
 		private var boolean:Boolean;
 		private var variable:String;
 		private var children:Array;
 		private var type:String;
+		private var scopeHandler:ScopeHandler;
 
-		public function ValueNode(lhs:String, args:Array, stackArgs:Array, vars:Object)
+		public function ValueNode(lhs:String, args:Array, stackArgs:Array, scope:ScopeHandler)
 		{
 			super(lhs, args);
 			var out = stackArgs[0];
-			variables = vars;
+			scopeHandler = scope;
 			type = out.getType();
 			switch(out.getType())
 			{
 				case "variable":
-					trace("Creating new variable "+stackArgs[0].getSymbol());
 					variable = stackArgs[0].getSymbol();
-					variables[variable] = 0;	
-					returnType = 3;
+					var resolved = scopeHandler.resolve(variable) === undefined; 
+					trace("resolved "+resolved);
+					if(scopeHandler.resolve(variable) === undefined || scopeHandler.error())
+					{
+						throwError("Unresolved variable "+variable+" referenced.");
+					}
+					setReturnType(TYPE_VARIABLE);
 				break;
 				case "number":
 					number = Number(stackArgs[0].getSymbol());
-					returnType = 1;
+					setReturnType(TYPE_NUMBER);
 				break;
 				case "boolean":
 					boolean = Boolean(stackArgs[0].getSymbol());
-					returnType = 4;
+					setReturnType(TYPE_BOOLEAN);
 				break;
 				case "string":
 					string = stackArgs[0].getSymbol();
 					string = string.substring(1, string.length-1);
-					returnType = 2;
+					setReturnType(TYPE_STRING);
 				break;
 				default:
 					trace("Unrecognized type..."+out.getSymbol());
@@ -53,30 +56,51 @@ package Language.Execution {
 		}
 
 		public override function run():Object{
-			switch (returnType)
+			switch (getReturnType())
 			{
-				case 1:
+				case TYPE_NUMBER:
 					return number;
-				case 2:
+				case TYPE_STRING:
 					return string;
-				case 3:
-					return variables[variable];
-				case 4:
+				case TYPE_VARIABLE:
+					var out = scopeHandler.resolve(variable);
+					if(scopeHandler.resolve(variable) === undefined)
+					{
+						throwError("Unresolved variable "+variable);
+					}
+					return out;
+				case TYPE_BOOLEAN:
 					return boolean;
 			}
 			return null;
 		}
 
-		public function assign(arg:Object){
-			variables[variable] = arg;
+		public override function assign(arg:Object, typeAssigned:String){
+			if(getReturnType() != TYPE_VARIABLE)
+			{
+				throwError("CANNOT ASSIGN TO A NON-REFERENCE VARIABLE");
+				return;
+			}
+			scopeHandler.assign(arg, variable, typeAssigned);
 		}
 
-		public function innerType():String
+		public override function innerType()
 		{
-			return "number";
+			switch (getReturnType())
+			{
+				case TYPE_NUMBER:
+					return "number";
+				case TYPE_STRING:
+					return "string";
+				case TYPE_VARIABLE:
+					return scopeHandler.getType(variable);
+				case TYPE_BOOLEAN:
+					return "boolean";
+			}
+
 		}
 
-		public function getType()
+		public override function getType()
 		{
 			return type;
 		}
