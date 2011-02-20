@@ -9,6 +9,7 @@ package Console
 	import flash.display.*;
 	import flash.text.*;
 	import flash.events.*;
+	import flash.geom.*;
 	public class CodeField extends Sprite
 	{
 		private var inputFields:Array;
@@ -73,7 +74,9 @@ package Console
 		{
 		}
 
-		public function indexesToRectangle(
+		public function indexesToRectangle()
+		{
+		}
 
 		public function loadText(s:String)
 		{
@@ -89,7 +92,7 @@ package Console
 					var field = new InputField(displayField, (i-1)/2, soFar, soFar+parts[i].length, propagate, maxLength);
 					field.type = TextFieldType.INPUT;
 					field.defaultTextFormat = DEFAULT_FORMAT;
-					field.multiline = marks[i].charAt(marks[i].length-1) == m;
+					field.multiline = marks[i].charAt(marks[i].length-1) == 'm';
 					field.textColor = 0xff0000;
 					field.text = parts[i];
 					inputFields.push(field);
