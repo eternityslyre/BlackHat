@@ -2,7 +2,6 @@
 * This class extends the TextField so as to allow highlighting and modification of 
 * only select portions of itself, while still drawing and storing the results
 * as if it were a normal TextField.
-* I HAVE NO IDEA HOW TO DO THIS aHHHHHHHHHHHHHHHHHAHAHAHAHHHHHHHHHH
 **************************************************************************************/
 
 package Console
@@ -12,7 +11,7 @@ package Console
 	import flash.events.*;
 	public class CodeField extends Sprite
 	{
-		private var inputFields:Object;
+		private var inputFields:Array;
 		private var displayField:TextField;
 		private var text:String;
 		private var endIndex:int;
@@ -22,7 +21,7 @@ package Console
 		public function CodeField(x:int, y:int, width:int, height:int)
 		{
 			colorIndex = 0;
-			inputFields = new Object();
+			inputFields = new Array();
 			displayField = new TextField();
 			displayField.type = TextFieldType.DYNAMIC;
 			displayField.backgroundColor = 0x000000;
@@ -39,29 +38,20 @@ package Console
             DEFAULT_FORMAT = new TextFormat();
             DEFAULT_FORMAT.font = "Verdana";
             DEFAULT_FORMAT.color = 0x00dd00;
-            DEFAULT_FORMAT.size = 20;
+            DEFAULT_FORMAT.size = 10;
 			displayField.defaultTextFormat = DEFAULT_FORMAT;
-			displayField.text = "This is a test string.\nThis is an editable line.\nThis is a line with THIS PART editable.";
-
-			var metrics = displayField.getLineMetrics(1);
-			var field = createField(metrics.x-2, displayField.y + metrics.height, width, metrics.height*20);
-			field.text = "This is an editable line.\n";
-			field.addEventListener(Event.CHANGE , textEdited);
-			field.addEventListener(FocusEvent.KEY_FOCUS_CHANGE, TextKeyFocusChange);
-			endIndex = displayField.getLineOffset(1)+field.text.length; 
 			addChild(displayField);
-			addChild(field);
-			field.addEventListener(Event.ENTER_FRAME, pulse);
 		}
 
 		private function pulse(event:Event)
 		{
-			var pulseRed = Math.floor((1-Math.cos(colorIndex))/2*0xff);
-			var pulseGreen= Math.floor((1-Math.cos(colorIndex))/2*0x22);
-			var pulseBlue = Math.floor((1-Math.cos(colorIndex))/2*0xff);
-			for (var field in inputFields)
+			for (var fieldIndex in inputFields)
 			{
-				inputFields[field].textColor = rgbToHex(0x00+pulseRed, 0xdd+pulseGreen, 0x00+pulseRed);
+				var field = inputFields[fieldIndex];
+				var pulseRed = Math.floor((1-Math.cos(colorIndex))/2*(field.endRed-field.red));
+				var pulseGreen= Math.floor((1-Math.cos(colorIndex))/2*(field.endGreen-field.green));
+				var pulseBlue = Math.floor((1-Math.cos(colorIndex))/2*(field.endBlue-field.blue));
+				inputFields[fieldIndex].textColor = rgbToHex(field.red+pulseRed, field.green+pulseGreen, field.blue+pulseBlue);
 			}
 			colorIndex += 0.05;
 		}
@@ -71,35 +61,46 @@ package Console
 			return (red<<16)+(green<<8)+blue;
 		}
 
-
-		private function createInputField(fullText:TextField, startIndex:int, endIndex:int, restrictions:String)
+		public function propagate(index:int, count:int)
 		{
-			var line = fullText.getLineIndexOfChar(startIndex);
-			var xPosition = fullText.getCharBoundaries(startIndex);
-			var metrics = fullText.getTextLineMetrics(line);
-
+			for(var i = index+1; i < inputFields.length; i++)
+			{
+				inputFields[i].shift(count);
+			}
 		}
 
-		private function createField(x:int, y:int, width:int, height:int):TextField
+		public function electrify(rect:Rectangle)
 		{
-			var field = new TextField();
-			field.type = TextFieldType.INPUT;
-			field.backgroundColor = 0x000000;
-			field.x = x;
-			field.y = y;
-			field.width = width;
-			field.height = height;
-			field.multiline = true;
-			field.wordWrap = true;
-
-			field.defaultTextFormat = DEFAULT_FORMAT;
-
-			return field;
 		}
+
+		public function indexesToRectangle(
 
 		public function loadText(s:String)
 		{
-			displayField.text = s;
+			displayField.text = s.replace(/\d\+#\w/g,"");
+			var soFar = 0;
+			var marks = s.match(/\d\+#\w/)
+			var parts = s.split(/\d\+#\w/);
+			for ( var i = 0; i < parts.length; i++)
+			{
+				if(i%2==1)
+				{
+					var maxLength = int(marks[i].substring(0, marks[i].indexOf('#')));
+					var field = new InputField(displayField, (i-1)/2, soFar, soFar+parts[i].length, propagate, maxLength);
+					field.type = TextFieldType.INPUT;
+					field.defaultTextFormat = DEFAULT_FORMAT;
+					field.multiline = marks[i].charAt(marks[i].length-1) == m;
+					field.textColor = 0xff0000;
+					field.text = parts[i];
+					inputFields.push(field);
+					addChild(field);
+				}
+				soFar += parts[i].length;
+
+			}
+			addEventListener(Event.ENTER_FRAME, pulse);
+			inputFields[1].setColor(0xffff00);
+			inputFields[1].setEndColor(0xff0000);
 		}
 
 		public function getText()
