@@ -8,6 +8,7 @@ package Console
 {
 	import flash.display.*;
 	import flash.text.*;
+	import flash.filters.*;
 	import flash.events.*;
 	import flash.geom.*;
 	public class CodeField extends Sprite
@@ -46,15 +47,21 @@ package Console
 
 		private function pulse(event:Event)
 		{
+			var pulseValue = (1-Math.cos(colorIndex))/2;
+			var blur = new GlowFilter(0xffffff, pulseValue, pulseValue*2, pulseValue*2);
 			for (var fieldIndex in inputFields)
 			{
 				var field = inputFields[fieldIndex];
-				var pulseRed = Math.floor((1-Math.cos(colorIndex))/2*(field.endRed-field.red));
-				var pulseGreen= Math.floor((1-Math.cos(colorIndex))/2*(field.endGreen-field.green));
-				var pulseBlue = Math.floor((1-Math.cos(colorIndex))/2*(field.endBlue-field.blue));
-				inputFields[fieldIndex].textColor = rgbToHex(field.red+pulseRed, field.green+pulseGreen, field.blue+pulseBlue);
+				var pulseRed = Math.floor(pulseValue*(field.endRed-field.red));
+				var pulseGreen= Math.floor(pulseValue*(field.endGreen-field.green));
+				var pulseBlue = Math.floor(pulseValue*(field.endBlue-field.blue));
+				field.textColor = rgbToHex(field.red+pulseRed, field.green+pulseGreen, field.blue+pulseBlue);
+				field.filters = [blur]; 
 			}
 			colorIndex += 0.05;
+			if(pulseValue > 0.9)
+				electrify(indexesToRectangle(1,11));
+			else graphics.clear();
 		}
 
 		private function rgbToHex(red:int, green:int, blue:int):uint
@@ -72,20 +79,28 @@ package Console
 
 		public function electrify(rect:Rectangle)
 		{
+			//trace("drawing from "+rect.x+", "+rect.y+" to "+rect.x+rect.width+", "+rect.y+rect.height);
+			graphics.lineStyle(2, 0x990000, 1);
+			graphics.moveTo(rect.x, rect.y);
+			graphics.lineTo(rect.x+rect.width, rect.y+rect.height);
 		}
 
-		public function indexesToRectangle()
+		public function indexesToRectangle(start:int, end:int):Rectangle
 		{
+			var xStart = displayField.getCharBoundaries(start);
+			var xEnd = displayField.getCharBoundaries(end-1);
+			return new Rectangle(displayField.x + xStart.x, displayField.y + xStart.y, xEnd.x - xStart.x, xStart.height);
 		}
 
 		public function loadText(s:String)
 		{
-			displayField.text = s.replace(/\d\+#\w/g,"");
+			displayField.text = s.replace(/\d+#\w/g,"");
 			var soFar = 0;
-			var marks = s.match(/\d\+#\w/)
-			var parts = s.split(/\d\+#\w/);
+			var marks = s.match(/\d+#\w/g)
+			var parts = s.split(/\d+#\w/);
 			for ( var i = 0; i < parts.length; i++)
 			{
+				trace("line is : "+parts[i]);
 				if(i%2==1)
 				{
 					var maxLength = int(marks[i].substring(0, marks[i].indexOf('#')));
@@ -102,8 +117,6 @@ package Console
 
 			}
 			addEventListener(Event.ENTER_FRAME, pulse);
-			inputFields[1].setColor(0xffff00);
-			inputFields[1].setEndColor(0xff0000);
 		}
 
 		public function getText()

@@ -103,6 +103,7 @@ package Console
 			txt.replaceText(txt.caretIndex,txt.caretIndex,"\t");
 			txt.setSelection(txt.caretIndex+1, txt.caretIndex+1);
 			displayField.replaceText(startIndex, endIndex, text);
+			updateCallback(id, startIndex+e.target.text.length - endIndex);
 			endIndex = startIndex+text.length; 
 		}
 
