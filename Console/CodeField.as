@@ -59,9 +59,9 @@ package Console
 				field.filters = [blur]; 
 			}
 			colorIndex += 0.05;
-			if(pulseValue > 0.9)
-				electrify(indexesToRectangle(1,11));
-			else graphics.clear();
+			if(Math.random() > 0.9)
+				electrify(indexesToRectangle(20,70));
+			else if(Math.random()<0.2) graphics.clear();
 		}
 
 		private function rgbToHex(red:int, green:int, blue:int):uint
@@ -79,17 +79,57 @@ package Console
 
 		public function electrify(rect:Rectangle)
 		{
-			//trace("drawing from "+rect.x+", "+rect.y+" to "+rect.x+rect.width+", "+rect.y+rect.height);
+			graphics.clear();
+			trace("drawing from "+rect.x+", "+rect.y+" to "+(rect.x+rect.width)+", "+(rect.y+rect.height));
 			graphics.lineStyle(2, 0x990000, 1);
 			graphics.moveTo(rect.x, rect.y);
-			graphics.lineTo(rect.x+rect.width, rect.y+rect.height);
+			var x = rect.x;
+			var y = rect.y;
+			var variance = 15;
+			while(x<rect.x+rect.width)
+			{
+				x += rect.width*(0.01+0.1*Math.random());
+				if(Math.random()>0.2)
+				graphics.lineTo(x,y+variance*(0.5*(Math.random()-0.5)));
+				else 
+				graphics.moveTo(x,y+variance*(0.5*(Math.random()-0.5)));
+			}
+			while(y<rect.y+rect.height)
+			{
+				y += rect.height*(0.01+0.1*Math.random());
+				if(Math.random()>0.2)
+				graphics.lineTo(x+variance*(0.5*(Math.random()-0.5)),y);
+				else
+				graphics.moveTo(x+variance*(0.5*(Math.random()-0.5)),y);
+			}
+			while(x>rect.x)
+			{
+				x -= rect.width*(0.01+0.1*Math.random());
+				if(Math.random()>0.2)
+				graphics.lineTo(x,y+variance*(0.5*(Math.random()-0.5)));
+				else
+				graphics.moveTo(x,y+variance*(0.5*(Math.random()-0.5)));
+			}
+			while(y>rect.y)
+			{
+				y -= rect.height*(0.01+0.1*Math.random());
+				if(Math.random()>0.2)
+				graphics.lineTo(x+variance*(0.5*(Math.random()-0.5)),y);
+				else 
+				graphics.moveTo(x+variance*(0.5*(Math.random()-0.5)),y);
+			}
 		}
 
 		public function indexesToRectangle(start:int, end:int):Rectangle
 		{
+			trace("getting for "+start+" to "+end);
 			var xStart = displayField.getCharBoundaries(start);
 			var xEnd = displayField.getCharBoundaries(end-1);
-			return new Rectangle(displayField.x + xStart.x, displayField.y + xStart.y, xEnd.x - xStart.x, xStart.height);
+			var startx = Math.min(xStart.x, xEnd.x);
+			var starty = Math.min(xStart.y, xEnd.y);
+			var endx = Math.max(xStart.x, xEnd.x);
+			var endy = Math.max(xStart.y, xEnd.y);
+			return new Rectangle(displayField.x + startx, displayField.y + starty, endx - startx, endy-starty);
 		}
 
 		public function loadText(s:String)
