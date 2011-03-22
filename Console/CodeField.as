@@ -59,8 +59,8 @@ package Console
 				field.filters = [blur]; 
 			}
 			colorIndex += 0.05;
-			if(Math.random() > 0.9)
-				electrify(indexesToRectangle(20,75));
+			if(Math.random() > 0.3)
+				electrify(new Rectangle(displayField.x, displayField.y, displayField.width, displayField.height));
 			else if(Math.random()<0.3) graphics.clear();
 		}
 
@@ -84,40 +84,47 @@ package Console
 			graphics.moveTo(rect.x, rect.y);
 			var x = rect.x;
 			var y = rect.y;
-			var variance = 20;
-			var base = 0.01;
+			var variance = 50;
+			var base = 0.02;
+			var ybase = 0.04;
+			var grow = 0.01;
 			var draw = 0.4;
+			var thickness = 3;
+			var baseThickness = 1;
 			while(x<rect.x+rect.width)
 			{
-				graphics.lineStyle(3*Math.random(), 0x990000, 1);
-				x += rect.width*(base+0.1*Math.random());
+				graphics.lineStyle(thickness*Math.random()+baseThickness, 0x990000, 1);
+				x += rect.width*(base+grow*Math.random());
 				if(Math.random()>draw)
 				graphics.lineTo(x,y+variance*(0.5*(Math.random()-0.5)));
 				else 
 				graphics.moveTo(x,y+variance*(0.5*(Math.random()-0.5)));
 			}
+			graphics.moveTo(rect.x+rect.width, rect.y);
 			while(y<rect.y+rect.height)
 			{
-				graphics.lineStyle(3*Math.random(), 0x990000, 1);
-				y += rect.height*(base+0.1*Math.random());
+				graphics.lineStyle(thickness*Math.random()+baseThickness, 0x990000, 1);
+				y += rect.height*(ybase+grow*Math.random());
 				if(Math.random()>draw)
 				graphics.lineTo(x+variance*(0.5*(Math.random()-0.5)),y);
 				else
 				graphics.moveTo(x+variance*(0.5*(Math.random()-0.5)),y);
 			}
+			graphics.moveTo(rect.x+rect.width, rect.y+rect.height);
 			while(x>rect.x)
 			{
-				graphics.lineStyle(3*Math.random(), 0x990000, 1);
-				x -= rect.width*(base+0.1*Math.random());
+				graphics.lineStyle(thickness*Math.random()+baseThickness, 0x990000, 1);
+				x -= rect.width*(base+grow*Math.random());
 				if(Math.random()>draw)
 				graphics.lineTo(x,y+variance*(0.5*(Math.random()-0.5)));
 				else
 				graphics.moveTo(x,y+variance*(0.5*(Math.random()-0.5)));
 			}
+			graphics.moveTo(rect.x, rect.y+rect.height);
 			while(y>rect.y)
 			{
-				graphics.lineStyle(3*Math.random(), 0x990000, 1);
-				y -= rect.height*(base+0.1*Math.random());
+				graphics.lineStyle(thickness*Math.random()+baseThickness, 0x990000, 1);
+				y -= rect.height*(ybase+grow*Math.random());
 				if(Math.random()>draw)
 				graphics.lineTo(x+variance*(0.5*(Math.random()-0.5)),y);
 				else 
