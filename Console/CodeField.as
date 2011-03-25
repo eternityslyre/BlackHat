@@ -59,9 +59,9 @@ package Console
 				field.filters = [blur]; 
 			}
 			colorIndex += 0.05;
-			if(Math.random() > 0.3)
+			if(Math.random() > 0.9)
 				electrify(new Rectangle(displayField.x, displayField.y, displayField.width, displayField.height));
-			else if(Math.random()<0.3) graphics.clear();
+			else if(Math.random()<0.1) graphics.clear();
 		}
 
 		private function rgbToHex(red:int, green:int, blue:int):uint
@@ -85,7 +85,7 @@ package Console
 			var x = rect.x;
 			var y = rect.y;
 			var variance = 50;
-			var base = 0.02;
+			var base = 0.01;
 			var ybase = 0.04;
 			var grow = 0.01;
 			var draw = 0.4;
