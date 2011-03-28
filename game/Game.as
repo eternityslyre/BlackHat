@@ -41,8 +41,8 @@ package Game
 			FPSTextField = new TextField();
 			FPSTextField.width = 70;
 			FPSTextField.height = 30;
-			FPSTextField.x = 360;
-			FPSTextField.y = 0;
+			FPSTextField.x = 420;
+			FPSTextField.y = 80;
 			FPSTextField.background = true;
 			addChild(FPSTextField);
 
@@ -59,13 +59,13 @@ package Game
 		{
 			if(showConsole && console.y + console.height < screenHeight){
 				console.y+=consoleMoveSpeed;
-				world.drawCurtain(0,0,stage.width, console.height+console.y+consoleMoveSpeed);
+				//world.drawCurtain(0,0,stage.width, console.height+console.y+consoleMoveSpeed);
 			}
 			if(!showConsole){
 				if(console.y + console.height >= -20){
 					console.y-=consoleMoveSpeed;
 					trace(console.y+console.height);
-					world.drawCurtain(0,0,stage.width, console.height+console.y+consoleMoveSpeed);
+					//world.drawCurtain(0,0,stage.width, console.height+console.y+consoleMoveSpeed);
 				}
 				else 
 				{
@@ -95,7 +95,7 @@ package Game
 
 		public function handleKeys(e:KeyboardEvent)
 		{
-			trace("key pressed: "+e.keyCode);
+			//trace("key pressed: "+e.keyCode);
 			switch(e.keyCode)
 			{
 				case 192: 

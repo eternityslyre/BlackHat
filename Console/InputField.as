@@ -57,7 +57,7 @@ package Console
 			var newWidth = xEnd.x + xEnd.width - xStart.x;
 			var metrics = displayField.getLineMetrics(line);
 			x = displayField.x + xStart.x - 2;
-			y = displayField.y + metrics.height*line;
+			y = displayField.y + metrics.height*line+100;
 			width = displayField.width;
 			height = metrics.height*20+2;
 		}
@@ -103,6 +103,10 @@ package Console
 			txt.replaceText(txt.caretIndex,txt.caretIndex,"\t");
 			txt.setSelection(txt.caretIndex+1, txt.caretIndex+1);
 			displayField.replaceText(startIndex, endIndex, text);
+			trace("DisplayField: ");
+			trace(displayField.text);
+			trace("Input: ");
+			trace(text);
 			updateCallback(id, startIndex+e.target.text.length - endIndex);
 			endIndex = startIndex+text.length; 
 		}

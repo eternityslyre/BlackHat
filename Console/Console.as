@@ -10,7 +10,7 @@ package Console {
 	import flash.text.*;
 	import flash.events.*;
 	public class Console extends Sprite{
-		private var text:TextField;
+		private var text:CodeField;
 		private var output:TextField;
 		private var runButton:RunButton;
 		private var parser:Parser;
@@ -20,19 +20,9 @@ package Console {
 		public function Console(x:int, y:int, width:int, height:int, backend:Parser){
 			parser = backend;
 			backend.setOutput(printOutput);
-			text = new TextField();
-			text.type = TextFieldType.INPUT;
-			//text.background = true;
-			text.backgroundColor = 0x000000;
-			text.border = true;
-			text.borderColor = 0x00dd00;
-			text.x = x;
-			text.y = y;
-			text.width = width;
-			text.height = height*0.5;
-			text.multiline = true;
-			text.wordWrap = true;
-			text.addEventListener(FocusEvent.KEY_FOCUS_CHANGE, TextKeyFocusChange);
+			text = new CodeField(x, y, width, height*0.5);
+			var testString = "trace(\"15#sHello World!15#s\");\n0#mYour Code Here.0#m";
+			text.loadText(testString);
 
 			output = new TextField();
 			output.type = TextFieldType.DYNAMIC;
@@ -53,8 +43,6 @@ package Console {
             format.color = 0x00dd00;
             format.size = 10;
 
-			text.defaultTextFormat = format;
-			text.text = "x(0);y(0);";
 			output.defaultTextFormat = format;
 
 			addChild(text);
@@ -100,8 +88,8 @@ package Console {
 			trace("Begin!");
 			trace("text is");
 			try {
-				trace(text.text);
-				var tree = parser.parseString(text.text, objectScope);
+				trace(text.getText());
+				var tree = parser.parseString(text.getText(), objectScope);
 				if(tree != null)
 				{
 					tree.printTree();
@@ -117,7 +105,7 @@ package Console {
 				if (!parser.succeeded())
 				{
 					trace("highlight error");
-					highlight(parser.currentPosition());
+					text.highlight(parser.currentPosition());
 				}
 				if(tree.error)
 				{
@@ -141,17 +129,5 @@ package Console {
 			objectScope = symbol;
 		}
 
-		public function highlight(s:String)
-		{
-			trace(s);
-			var start = s.indexOf('[');
-			var end = s.indexOf(']')-1;
-            var format:TextFormat = new TextFormat();
-            format.font = "Verdana";
-            format.color = 0xdd0000;
-            format.size = 13;
-			text.setTextFormat(format, start, end);
-			
-		}
 	}
 }

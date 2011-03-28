@@ -25,7 +25,7 @@ package Console
 			colorIndex = 0;
 			inputFields = new Array();
 			displayField = new TextField();
-			displayField.type = TextFieldType.DYNAMIC;
+			displayField.type = TextFieldType.INPUT;//DYNAMIC;
 			displayField.backgroundColor = 0x000000;
 			displayField.border = true;
 			displayField.borderColor = 0x00dd00;
@@ -35,7 +35,7 @@ package Console
 			displayField.height = height;
 			displayField.multiline = true;
 			displayField.wordWrap = true;
-			displayField.selectable = false;
+			//displayField.selectable = false;
 
             DEFAULT_FORMAT = new TextFormat();
             DEFAULT_FORMAT.font = "Verdana";
@@ -59,9 +59,9 @@ package Console
 				field.filters = [blur]; 
 			}
 			colorIndex += 0.05;
-			if(Math.random() > 0.9)
+			if(Math.random() > 0.95)
 				electrify(new Rectangle(displayField.x, displayField.y, displayField.width, displayField.height));
-			else if(Math.random()<0.1) graphics.clear();
+			else if(Math.random()<0.2) graphics.clear();
 		}
 
 		private function rgbToHex(red:int, green:int, blue:int):uint
@@ -172,6 +172,19 @@ package Console
 
 		public function getText()
 		{
+			return displayField.text;
+		}
+
+		public function highlight(s:String)
+		{
+			trace(s);
+			var start = s.indexOf('[');
+			var end = s.indexOf(']')-1;
+            var format:TextFormat = new TextFormat();
+            format.font = "Verdana";
+            format.color = 0xdd0000;
+			displayField.setTextFormat(format, start, end);
+			
 		}
 
 	}
