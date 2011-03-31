@@ -57,7 +57,7 @@ package Console
 			var newWidth = xEnd.x + xEnd.width - xStart.x;
 			var metrics = displayField.getLineMetrics(line);
 			x = displayField.x + xStart.x - 2;
-			y = displayField.y + metrics.height*line+100;
+			y = displayField.y + metrics.height*line;
 			width = displayField.width;
 			height = metrics.height*20+2;
 		}
@@ -100,13 +100,9 @@ package Console
 		{
 			e.preventDefault();
 			var txt:TextField = TextField(e.currentTarget);
-			txt.replaceText(txt.caretIndex,txt.caretIndex,"\t");
-			txt.setSelection(txt.caretIndex+1, txt.caretIndex+1);
+			txt.replaceText(txt.caretIndex,txt.caretIndex,"    ");
+			txt.setSelection(txt.caretIndex+4, txt.caretIndex+4);
 			displayField.replaceText(startIndex, endIndex, text);
-			trace("DisplayField: ");
-			trace(displayField.text);
-			trace("Input: ");
-			trace(text);
 			updateCallback(id, startIndex+e.target.text.length - endIndex);
 			endIndex = startIndex+text.length; 
 		}

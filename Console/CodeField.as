@@ -41,6 +41,12 @@ package Console
             DEFAULT_FORMAT.font = "Verdana";
             DEFAULT_FORMAT.color = 0x00dd00;
             DEFAULT_FORMAT.size = 10;
+			var tabArray = new Array();
+			for(var i = 0; i < 1000; i+=40)
+			{
+				tabArray.push(i);
+			}
+			DEFAULT_FORMAT.tabStops = [];///tabArray;
 			displayField.defaultTextFormat = DEFAULT_FORMAT;
 			addChild(displayField);
 		}
@@ -159,6 +165,7 @@ package Console
 					field.type = TextFieldType.INPUT;
 					field.defaultTextFormat = DEFAULT_FORMAT;
 					field.multiline = marks[i].charAt(marks[i].length-1) == 'm';
+					field.wordWrap = field.multiline;
 					field.textColor = 0xff0000;
 					field.text = parts[i];
 					inputFields.push(field);
