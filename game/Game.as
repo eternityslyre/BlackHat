@@ -55,30 +55,10 @@ package Game
 			addEventListener(Event.ENTER_FRAME, onEnterFrame);
 		}
 
-		public function handleConsole()
-		{
-			if(showConsole && console.y + console.height < screenHeight){
-				console.y+=consoleMoveSpeed;
-				//world.drawCurtain(0,0,stage.width, console.height+console.y+consoleMoveSpeed);
-			}
-			if(!showConsole){
-				if(console.y + console.height >= -20){
-					console.y-=consoleMoveSpeed;
-					trace(console.y+console.height);
-					//world.drawCurtain(0,0,stage.width, console.height+console.y+consoleMoveSpeed);
-				}
-				else 
-				{
-					pause = false;
-					world.resume();
-				}
-			}
-		}
 
 		public function onEnterFrame(e:Event)
 		{
 			calculateFPS();
-			handleConsole();
 		}
 
 		public function calculateFPS()
