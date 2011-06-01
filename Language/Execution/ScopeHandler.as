@@ -1,4 +1,4 @@
-/*******************************************************************
+﻿/*******************************************************************
 * The ScopeHandler produces scoped variables, which allow recursion
 * and so forth. It contains a stack (array, really) of symbol tables.
 *********************************************************************/
@@ -25,7 +25,7 @@ package Language.Execution
 			var currentScope = scope;
 			err = false;
 			var out;
-			if(attachedObject != null)
+			if(attachedObject != null && attachedObject.hasOwnProperty(identifier))
 			{
 				out = attachedObject[identifier];
 				if(typeof(out)==type)
@@ -63,7 +63,7 @@ package Language.Execution
 			var out;
 			var currentScope = scope;
 			err = false;
-			if(attachedObject != null)
+			if(attachedObject != null && attachedObject.hasOwnProperty(identifier))
 			{
 				out = attachedObject[identifier];
 				trace("Our external scope finds: "+out);
@@ -93,7 +93,7 @@ package Language.Execution
 		{
 			var out;
 			var type;
-			if(attachedObject != null)
+			if(attachedObject != null && attachedObject.hasOwnProperty(identifier))
 			{
 				out = attachedObject[identifier];
 				if(out!==undefined)

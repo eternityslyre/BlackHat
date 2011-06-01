@@ -34,6 +34,7 @@ package Game
 			world = new World();
 			addChild(world);
 			console = new Console(10,10,400,360,parse);
+			console.attachScope(world.getBall());
 			addListeners(stage);
 			screenHeight = 360;
 			addChild(console);
@@ -55,11 +56,36 @@ package Game
 			addEventListener(Event.ENTER_FRAME, onEnterFrame);
 		}
 
+		public function handleConsole()
+		{
+				world.drawCurtain(0,0,stage.width, console.height+console.y+consoleMoveSpeed);
+			if(showConsole && console.y + console.height < screenHeight)
+			{
+				console.y+=consoleMoveSpeed;
+				//world.drawCurtain(0,0,stage.width, console.height+console.y+consoleMoveSpeed);
+			}
+
+			if(!showConsole)
+			{
+				if(console.y + console.height >= -20){
+					console.y-=consoleMoveSpeed;
+					trace(console.y+console.height);
+					//world.drawCurtain(0,0,stage.width, console.height+console.y+consoleMoveSpeed);
+				}
+				else 
+				{
+					pause = false;
+					world.resume();
+				}
+			}
+		}
 
 		public function onEnterFrame(e:Event)
 		{
 			calculateFPS();
+			handleConsole();
 		}
+
 
 		public function calculateFPS()
 		{

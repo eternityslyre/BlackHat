@@ -53,7 +53,6 @@ package Console
 
 		private function pulse(event:Event)
 		{
-			return;
 			var pulseValue = (1-Math.cos(colorIndex))/2;
 			var blur = new GlowFilter(0xffffff, pulseValue, pulseValue*2, pulseValue*2);
 			for (var fieldIndex in inputFields)

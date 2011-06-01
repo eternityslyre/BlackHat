@@ -9,6 +9,7 @@ package World
 	import flash.display.*;
 	import flash.filters.*;
 	import flash.geom.*;
+	import World.Objects.*;
 
 	public class World extends MovieClip
 	{
@@ -30,29 +31,27 @@ package World
 		private var curtain:Rectangle;
 
 
-		private var blur_x = 6;
+		private var blur_x = 12;
 		private var blur_y = 6;
 		private var blur_quality = 1;
 		private var blurArray;
 		private var emptyArray;
 		private var glowArray;
+		
+		private var ball;
 
 		public function World()
 		{
 			protectedObjects = new MovieClip();
+			protectedObjects.visible = false;
 			exposedObjects = new MovieClip();
-			//addChild(protectedObjects);
-			var ball = new Ball();
-			ball.x = 150;
-			ball.y = 150;
-			exposedObjects.addChild(ball);
-			for(var i = 0; i < 10; i++)
+			ball = new Ball(150, 150,2,2);
+			for(var i = 0; i < 5; i++)
 			{
-				var ball2 = new Ball();
-				ball2.x = 400/10*i;
-				ball2.y = 400/10*i;
+				var ball2 = new Ball(50+400/10*i,50+400/10*i, 10*Math.random(), 0);//10*Math.random());
 				protectedObjects.addChild(ball2);
 			}
+			addChild(protectedObjects);
 			blurArray = new Array();
 			blurArray.push(new BlurFilter(blur_x, blur_y, blur_quality));
 			glowArray = new Array();
@@ -62,17 +61,23 @@ package World
 			emptyArray = new Array();
 
 			background = new Bitmap();
-			backgroundData = new BitmapData(400,360);
-			backgroundBuffer = new BitmapData(400,360);
+			backgroundData = new BitmapData(550,400);
+			backgroundBuffer = new BitmapData(550,400);
 			addChild(background);
+			exposedObjects.addChild(ball);
 			addChild(exposedObjects);
-			curtain = new Rectangle(400, 360);
+			curtain = new Rectangle(550,400);
+		}
+
+		public function getBall()
+		{
+			return ball;
 		}
 
 		public function resume()
 		{
 			//set up the blur filter
-			var rectangle = new Rectangle(0,0,400,360);
+			var rectangle = new Rectangle(0,0,550,400);
 
 			//draw black background
 			backgroundBuffer.fillRect(rectangle, 0x000000);
@@ -90,10 +95,9 @@ package World
 			trace(height);
 
 			//draw black background
-			var rectangle = new Rectangle(0,0,400,360);
-			backgroundData.fillRect(rectangle, 0x0000ff);
-			var rectangle2 = new Rectangle(200,0,10,360);
-			backgroundData.fillRect(rectangle2, 0xff0000);
+			var rectangle = new Rectangle(0,0,550,400);
+			backgroundData.fillRect(rectangle, 0x000000);
+			backgroundBuffer.fillRect(rectangle, 0x000000);
 			//set up the blur filter
 			backgroundBuffer.draw(protectedObjects);
 			backgroundData.draw(protectedObjects);
