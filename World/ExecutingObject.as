@@ -5,7 +5,9 @@
 ***********************************************************************/
 package World
 {
-	public class ExecutingObject implements ScopableObject
+	import flash.display.MovieClip;
+	public class ExecutingObject extends MovieClip implements IProgrammable
 	{
+		/* Constructor to pull out all properties available for call and edit */
 	}
 }

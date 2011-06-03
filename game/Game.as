@@ -23,17 +23,24 @@ package Game
 		private var pause:Boolean;
 		private var world:World;
 		private var screenHeight:Number;
-		private var consoleMoveSpeed:Number = 5;
+		private var consoleMoveSpeed:Number = 10;
 
 		private var FPSTextField;
 		private var previousTime:uint;
 		private var cycles:uint;
+		private var CONSOLE_DOWN_SPEED = 0.5;
+		private var WORLD_SPEED = 1;
+		private var gameSpeed:Number = WORLD_SPEED;
+		private var CONSOLE_DOWN_FPS= 60;
+		private var WORLD_FPS = 1;
+		private var framesPerSecond = WORLD_FPS;
 
 		public function Game(stage:Stage, parse:Parser)
 		{
 			world = new World();
 			addChild(world);
 			console = new Console(10,10,400,360,parse);
+			//console.visible = false;
 			console.attachScope(world.getBall());
 			addListeners(stage);
 			screenHeight = 360;
@@ -58,11 +65,11 @@ package Game
 
 		public function handleConsole()
 		{
-				world.drawCurtain(0,0,stage.width, console.height+console.y+consoleMoveSpeed);
-			if(showConsole && console.y + console.height < screenHeight)
+			if(showConsole) 
 			{
-				console.y+=consoleMoveSpeed;
-				//world.drawCurtain(0,0,stage.width, console.height+console.y+consoleMoveSpeed);
+				if(console.y + console.height < screenHeight)
+					console.y+=consoleMoveSpeed;
+				world.drawCurtain(0,0,stage.width, console.height+console.y+consoleMoveSpeed);
 			}
 
 			if(!showConsole)
@@ -70,12 +77,14 @@ package Game
 				if(console.y + console.height >= -20){
 					console.y-=consoleMoveSpeed;
 					trace(console.y+console.height);
-					//world.drawCurtain(0,0,stage.width, console.height+console.y+consoleMoveSpeed);
+					world.drawCurtain(0,0,stage.width, console.height+console.y+consoleMoveSpeed);
 				}
 				else 
 				{
 					pause = false;
 					world.resume();
+					gameSpeed = WORLD_SPEED;
+					framesPerSecond = WORLD_FPS;
 				}
 			}
 		}
@@ -84,6 +93,7 @@ package Game
 		{
 			calculateFPS();
 			handleConsole();
+			world.update(gameSpeed, framesPerSecond);
 		}
 
 
@@ -109,6 +119,8 @@ package Game
 					{
 						showConsole = true;
 						world.freeze();
+						gameSpeed = CONSOLE_DOWN_SPEED;
+						framesPerSecond = CONSOLE_DOWN_FPS;
 						pause = true;
 					}
 					else {

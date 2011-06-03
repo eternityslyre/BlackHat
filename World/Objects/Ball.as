@@ -19,13 +19,12 @@ package World.Objects
 			y = yPos;
 			xVelocity = xVel;
 			yVelocity = yVel;
-			addEventListener(Event.ENTER_FRAME, onEnterFrame);
 		}
 
-		public function onEnterFrame(e:Event)
+		public function update(tick:Number)
 		{
-			x += xVelocity;
-			y += yVelocity;
+			x += xVelocity*tick;
+			y += yVelocity*tick;
 			if(x + width/2 > 550 || x - width/2 < 0) xVelocity*=-1;
 			if(y + height/2 > 400 || y - height/2 < 0) yVelocity*=-1;
 		}
