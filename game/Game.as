@@ -17,30 +17,39 @@ package Game
 
 	public class Game extends MovieClip
 	{
-
+		/* Console Variables */
 		private var showConsole:Boolean;
 		private var console:Console;
 		private var pause:Boolean;
 		private var world:World;
 		private var screenHeight:Number;
-		private var consoleMoveSpeed:Number = 10;
+		private var consoleMoveSpeed:Number = 1.5;
+		private var consolePercentage = 0;
 
+		/* FPS data */
 		private var FPSTextField;
 		private var previousTime:uint;
+
+		/* Time and Speed control */
 		private var cycles:uint;
 		private var CONSOLE_DOWN_SPEED = 0.5;
+		private var CONSOLE_DOWN_FPS= 0;
 		private var WORLD_SPEED = 1;
-		private var gameSpeed:Number = WORLD_SPEED;
-		private var CONSOLE_DOWN_FPS= 60;
 		private var WORLD_FPS = 1;
+		private var gameSpeed:Number = WORLD_SPEED;
 		private var framesPerSecond = WORLD_FPS;
+
+
+		/* Hacking target */
+		private var target:ProgrammableObject;
 
 		public function Game(stage:Stage, parse:Parser)
 		{
 			world = new World();
+			world.game = this;
 			addChild(world);
-			console = new Console(10,10,400,360,parse);
-			//console.visible = false;
+			console = new Console(10,10,200,150,parse);
+			console.visible = false;
 			console.attachScope(world.getBall());
 			addListeners(stage);
 			screenHeight = 360;
@@ -57,6 +66,16 @@ package Game
 
 		}
 
+		public function loadConsole(p:ProgrammableObject)
+		{
+			if(!showConsole) return;
+			console.visible = true;
+			console.attachScope(p);
+			console.x = p.x+50;
+			console.y = p.y-50;
+			target = p;
+		}
+
 		private function addListeners(stage:Stage)
 		{
 			stage.addEventListener(KeyboardEvent.KEY_UP, handleKeys);
@@ -67,17 +86,35 @@ package Game
 		{
 			if(showConsole) 
 			{
-				if(console.y + console.height < screenHeight)
-					console.y+=consoleMoveSpeed;
-				world.drawCurtain(0,0,stage.width, console.height+console.y+consoleMoveSpeed);
+				if(consolePercentage<100)
+					consolePercentage+=consoleMoveSpeed;
+				world.drawCurtain(0,0,stage.width, stage.height*consolePercentage/100);
+				world.pulsate();
+				if(console.visible && target != null)
+				{
+					//draw a line from the console to the object
+					graphics.clear();
+					graphics.lineStyle(5, 0x00dd00, 1);
+					graphics.moveTo(target.x+target.width/2, target.y+target.height/2);
+					graphics.lineTo(console.x, console.y+console.height/2);
+				}
+				graphics.clear();
+				graphics.lineStyle(5, 0xffffff, 1);
+				graphics.moveTo(0,stage.height*consolePercentage/100);
+				graphics.lineTo(stage.width,stage.height*consolePercentage/100);
 			}
 
 			if(!showConsole)
 			{
-				if(console.y + console.height >= -20){
-					console.y-=consoleMoveSpeed;
-					trace(console.y+console.height);
-					world.drawCurtain(0,0,stage.width, console.height+console.y+consoleMoveSpeed);
+				if(consolePercentage>0){
+					consolePercentage-=consoleMoveSpeed;
+					world.drawCurtain(0,0,stage.width, stage.height*consolePercentage/100);
+					console.visible = false;
+					graphics.clear();
+					graphics.clear();
+					graphics.lineStyle(5, 0xffffff, 1);
+					graphics.moveTo(0,stage.height*consolePercentage/100);
+					graphics.lineTo(stage.width,stage.height*consolePercentage/100);
 				}
 				else 
 				{

@@ -21,7 +21,7 @@ package Console {
 			parser = backend;
 			backend.setOutput(printOutput);
 			text = new CodeField(x, y, width, height*0.5);
-			var testString = "trace(\"15#sHello World!15#s\");\n0#mYour Code Here.0#m";
+			var testString = "trace(\"15#sHello World!15#s\");\n0#mxVelocity = 3;0#m";
 			text.loadText(testString);
 
 			output = new TextField();

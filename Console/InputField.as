@@ -59,7 +59,8 @@ package Console
 			x = displayField.x + xStart.x - 2;
 			y = displayField.y + metrics.height*line;
 			width = displayField.width;
-			height = metrics.height*20+2;
+			// the 4 comes from the top and bottom gutters 
+			height = metrics.height + 4;
 		}
 
 		private function lengthCheck(e:TextEvent)

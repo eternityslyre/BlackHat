@@ -19,10 +19,13 @@ package Console
 		private var endIndex:int;
 		private var colorIndex:Number;
 		private var DEFAULT_FORMAT;
+		private var filterArray;
 
 		public function CodeField(x:int, y:int, width:int, height:int)
 		{
 			colorIndex = 0;
+			filterArray = new Array();
+			filterArray[0] = new GlowFilter(0xffffff,0,0,0);
 			inputFields = new Array();
 			displayField = new TextField();
 			displayField.type = TextFieldType.INPUT;//DYNAMIC;
@@ -54,7 +57,9 @@ package Console
 		private function pulse(event:Event)
 		{
 			var pulseValue = (1-Math.cos(colorIndex))/2;
-			var blur = new GlowFilter(0xffffff, pulseValue, pulseValue*2, pulseValue*2);
+			filterArray[0].alpha = pulseValue;
+			filterArray[0].blurX = pulseValue*2;
+			filterArray[0].blurY = pulseValue*2;
 			for (var fieldIndex in inputFields)
 			{
 				var field = inputFields[fieldIndex];
@@ -62,7 +67,7 @@ package Console
 				var pulseGreen= Math.floor(pulseValue*(field.endGreen-field.green));
 				var pulseBlue = Math.floor(pulseValue*(field.endBlue-field.blue));
 				field.textColor = rgbToHex(field.red+pulseRed, field.green+pulseGreen, field.blue+pulseBlue);
-				field.filters = [blur]; 
+				field.filters = filterArray; 
 			}
 			colorIndex += 0.05;
 			if(Math.random() > 0.95)

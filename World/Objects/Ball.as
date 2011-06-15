@@ -6,8 +6,9 @@ package World.Objects
 {
 	import flash.display.MovieClip;
 	import flash.events.*;
+	import World.*;
 
-	public class Ball extends MovieClip
+	public class Ball extends ProgrammableObject
 	{
 		public var xVelocity;
 		public var yVelocity;
@@ -21,12 +22,12 @@ package World.Objects
 			yVelocity = yVel;
 		}
 
-		public function update(tick:Number)
+		public override function update(tick:Number)
 		{
 			x += xVelocity*tick;
 			y += yVelocity*tick;
-			if(x + width/2 > 550 || x - width/2 < 0) xVelocity*=-1;
-			if(y + height/2 > 400 || y - height/2 < 0) yVelocity*=-1;
+			if(x + width > 550 || x < 0) xVelocity*=-1;
+			if(y + height > 400 || y < 0) yVelocity*=-1;
 		}
 
 	}
