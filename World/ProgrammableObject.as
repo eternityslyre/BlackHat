@@ -10,11 +10,12 @@ package World
 	public class ProgrammableObject extends ActiveObject //implements IProgrammable
 	{
 		private var world:World;
+		private var loaded:Boolean = false;
 		/* Constructor to pull out all properties available for call and edit */
 		public function ProgrammableObject()
 		{
 			addEventListener(MouseEvent.ROLL_OVER, rolledOver);
-			//addEventListener(MouseEvent.ROLL_OUT);
+			addEventListener(MouseEvent.ROLL_OUT, rolledOut);
 		}
 		public function setWorld(w:World)
 		{
@@ -22,8 +23,14 @@ package World
 		}
 		public function rolledOver(e:Event)
 		{
+			if(loaded)return;
 			world.loadConsole(this);
-			trace("rollover "+this);
+			loaded = true;
+		}
+		public function rolledOut(e:Event)
+		{
+			loaded = false;
+			trace("rollout");
 		}
 	}
 }

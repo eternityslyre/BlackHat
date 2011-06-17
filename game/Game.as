@@ -42,6 +42,7 @@ package Game
 
 		/* Hacking target */
 		private var target:ProgrammableObject;
+		private var drawDistance:Number = 0;
 
 		public function Game(stage:Stage, parse:Parser)
 		{
@@ -69,11 +70,12 @@ package Game
 		public function loadConsole(p:ProgrammableObject)
 		{
 			if(!showConsole) return;
-			console.visible = true;
+			console.visible = false;
 			console.attachScope(p);
-			console.x = p.x+50;
-			console.y = p.y-50;
+			console.x = stage.width/2 - console.width/2;
+			console.y = stage.height/2 - console.height/2;
 			target = p;
+			drawDistance = 0;
 		}
 
 		private function addListeners(stage:Stage)
@@ -91,16 +93,29 @@ package Game
 				}
 				world.drawCurtain(0,0,stage.width, stage.height*consolePercentage/100);
 				graphics.clear();
-				if(console.visible && target != null)
+				if(target != null)
 				{
+					if(drawDistance < 1)
+					{
+						drawDistance+=0.02;
+					}
+					else
+					{
+						console.visible = true;
+					}
 					//draw a line from the console to the object
 					graphics.lineStyle(5, 0x00dd00, 1);
-					graphics.moveTo(target.x+target.width/2, target.y+target.height/2);
-					graphics.lineTo(console.x, console.y+console.height/2);
+					var startx = target.x+target.width/2;
+					var starty = target.y+target.height/2;
+					var endx = console.x + console.width/2;
+					var endy = console.y + console.height/2;
+					graphics.moveTo(startx, starty);
+					graphics.lineTo((endx-startx)*drawDistance + startx, (endy-starty)*drawDistance + starty);
+							
 				}
 				graphics.lineStyle(5, 0xffffff, 1);
-				graphics.moveTo(0,stage.height*consolePercentage/100);
-				graphics.lineTo(stage.width,stage.height*consolePercentage/100);
+				graphics.moveTo(0, stage.height*consolePercentage/100);
+				graphics.lineTo(stage.width, stage.height*consolePercentage/100);
 			}
 
 			if(!showConsole)
@@ -127,13 +142,13 @@ package Game
 
 		public function onEnterFrame(e:Event)
 		{
-			calculateFPS();
+			calculateAndDisplayFPS();
 			handleConsole();
 			world.update(gameSpeed, framesPerSecond);
 		}
 
 
-		public function calculateFPS()
+		public function calculateAndDisplayFPS()
 		{
 			var now:uint = getTimer();
 			var delta = now - previousTime;
