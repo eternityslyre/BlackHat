@@ -20,11 +20,12 @@ package Console {
 		public function Console(x:int, y:int, width:int, height:int, backend:Parser){
 			parser = backend;
 			backend.setOutput(printOutput);
-			text = new CodeField(x, y, width, height*0.5);
+			text = new CodeField(x, y, width, height);
 			var testString = "trace(\"15#sHello World!15#s\");\n0#mxVelocity = 3;0#m";
 			text.loadText(testString);
 
 			output = new TextField();
+			/*
 			output.type = TextFieldType.DYNAMIC;
 			//output.background = true;
 			output.backgroundColor = 0x000000;
@@ -37,6 +38,7 @@ package Console {
 			output.multiline = true;
 			output.wordWrap = true;
 			output.mouseWheelEnabled = true;
+			*/
 
             var format:TextFormat = new TextFormat();
             format.font = "Verdana";
@@ -46,7 +48,7 @@ package Console {
 			output.defaultTextFormat = format;
 
 			addChild(text);
-			addChild(output);
+			//addChild(output);
 
 			cycleWindow = new TextField();
 			cycleWindow.type = TextFieldType.INPUT;

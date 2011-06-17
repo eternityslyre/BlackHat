@@ -39,8 +39,8 @@ package World
 		private var colorIndex:Number;
 
 
-		private var blur_x = 18;
-		private var blur_y = 18;
+		private var blur_x = 20;
+		private var blur_y = 12;
 		private var blur_quality = 1;
 		private var blurArray;
 		private var emptyArray;
@@ -141,7 +141,6 @@ package World
 			background.visible = false;
 			foreground.visible = false;
 			paused = false;
-			exposedObjects.filters = emptyArray;
 		}
 
 		public function drawCurtain(x:Number, y:Number, width:Number, height:Number) 
@@ -162,6 +161,7 @@ package World
 			protectedObjects.visible = true;
 			backgroundData.draw(protectedObjects);
 			protectedObjects.visible = false;
+
 			var pulseValue = (1-Math.cos(colorIndex))/2*8;
 			glowArray[0].alpha = pulseValue;
 			glowArray[0].blurX = pulseValue*2;

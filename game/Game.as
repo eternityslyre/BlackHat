@@ -86,19 +86,19 @@ package Game
 		{
 			if(showConsole) 
 			{
-				if(consolePercentage<100)
+				if(consolePercentage<100){
 					consolePercentage+=consoleMoveSpeed;
-				world.drawCurtain(0,0,stage.width, stage.height*consolePercentage/100);
+					world.drawCurtain(0,0,stage.width, stage.height*consolePercentage/100);
+				}
 				world.pulsate();
+				graphics.clear();
 				if(console.visible && target != null)
 				{
 					//draw a line from the console to the object
-					graphics.clear();
 					graphics.lineStyle(5, 0x00dd00, 1);
 					graphics.moveTo(target.x+target.width/2, target.y+target.height/2);
 					graphics.lineTo(console.x, console.y+console.height/2);
 				}
-				graphics.clear();
 				graphics.lineStyle(5, 0xffffff, 1);
 				graphics.moveTo(0,stage.height*consolePercentage/100);
 				graphics.lineTo(stage.width,stage.height*consolePercentage/100);

@@ -30,6 +30,7 @@ package Console
 			displayField = new TextField();
 			displayField.type = TextFieldType.INPUT;//DYNAMIC;
 			displayField.backgroundColor = 0x000000;
+			displayField.background = true;
 			displayField.border = true;
 			displayField.borderColor = 0x00dd00;
 			displayField.x = x;
