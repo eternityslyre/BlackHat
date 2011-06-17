@@ -88,9 +88,8 @@ package Game
 			{
 				if(consolePercentage<100){
 					consolePercentage+=consoleMoveSpeed;
-					world.drawCurtain(0,0,stage.width, stage.height*consolePercentage/100);
 				}
-				world.pulsate();
+				world.drawCurtain(0,0,stage.width, stage.height*consolePercentage/100);
 				graphics.clear();
 				if(console.visible && target != null)
 				{

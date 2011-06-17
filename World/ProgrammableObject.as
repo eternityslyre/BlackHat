@@ -23,6 +23,7 @@ package World
 		public function rolledOver(e:Event)
 		{
 			world.loadConsole(this);
+			trace("rollover "+this);
 		}
 	}
 }

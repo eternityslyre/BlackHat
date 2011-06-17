@@ -62,6 +62,7 @@ package World
 
 		public function World()
 		{
+			trace("world creation");
 			colorIndex = 0;
 			paused = false;
 			objects = new Array();
@@ -69,8 +70,9 @@ package World
 			protectedObjects.visible = false;
 			exposedObjects = new MovieClip();
 			ball = new Ball(150, 100,2,2);
-			for(var i = 0; i < 10; i++)
+			for(var i = 0; i < 5; i++)
 			{
+				trace("create ball "+i);
 				var ball2 = new Ball(50+200/10*i,10+350/10*i, Math.random()*10, Math.random()*10);
 				protectedObjects.addChild(ball2);
 				objects.push(ball2);
@@ -79,6 +81,7 @@ package World
 				exposedObjects.addChild(ball3);
 				objects.push(ball3);
 				ball3.setWorld(this);
+				trace("end create ball "+i);
 			}
 			addChild(protectedObjects);
 			blurArray = new Array();
@@ -115,7 +118,7 @@ package World
 		public function pulsate()
 		{
 			return;
-			var pulseValue = (1-Math.cos(colorIndex))/2*8;
+			var pulseValue = (1-Math.sin(colorIndex))/2*8;
 			glowArray[0].alpha = pulseValue;
 			glowArray[0].blurX = pulseValue*2;
 			glowArray[0].blurY = pulseValue*2;
