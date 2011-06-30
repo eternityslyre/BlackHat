@@ -52,6 +52,7 @@ package Console
 		public function realign()
 		{
 			var line = displayField.getLineIndexOfChar(startIndex);
+			var endLine = displayField.getLineIndexOfChar(endIndex-1);
 			var xStart = displayField.getCharBoundaries(startIndex);
 			var xEnd = displayField.getCharBoundaries(endIndex-1);
 			var newWidth = xEnd.x + xEnd.width - xStart.x;
@@ -60,13 +61,14 @@ package Console
 			y = displayField.y + metrics.height*line;
 			width = displayField.width;
 			// the 4 comes from the top and bottom gutters 
-			height = metrics.height + 4;
+			height = 150;//metrics.height*(endLine - line + 1) + 4;
 		}
 
 		private function lengthCheck(e:TextEvent)
 		{
 			if(maxLength > 0 &&e.text.length + text.length > maxLength)
 				e.preventDefault();
+			//realign();
 		}
 
 		public function setColorRGB(r:int, g:int, b:int)

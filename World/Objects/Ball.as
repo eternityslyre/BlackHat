@@ -22,7 +22,7 @@ package World.Objects
 			yVelocity = yVel;
 		}
 
-		public override function update(tick:Number)
+		public override function updateInner(tick:Number)
 		{
 			x += xVelocity*tick;
 			y += yVelocity*tick;

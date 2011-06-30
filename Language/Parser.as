@@ -209,7 +209,7 @@ package Language {
 				case "WhileLoop":
 					return new WhileLoopNode(lhs, args);
 				case "Block":
-					//scopeHandler.enterScope();
+					scopeHandler.enterScope();
 					var out = new ExecutionNode(lhs, args);	
 					scopeHandler.exitScope();
 					return out;

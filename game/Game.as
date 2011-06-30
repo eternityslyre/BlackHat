@@ -69,7 +69,7 @@ package Game
 
 		public function loadConsole(p:ProgrammableObject)
 		{
-			if(!showConsole) return;
+			if(!showConsole || target == p) return;
 			console.visible = false;
 			console.attachScope(p);
 			console.x = stage.width/2 - console.width/2;
@@ -147,7 +147,6 @@ package Game
 			world.update(gameSpeed, framesPerSecond);
 		}
 
-
 		public function calculateAndDisplayFPS()
 		{
 			var now:uint = getTimer();
@@ -176,6 +175,8 @@ package Game
 					}
 					else {
 						showConsole = false;
+						console.compileToTree();
+						//TODO: Compile and Link to Object
 					}
 				break;
 			}

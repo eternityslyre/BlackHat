@@ -18,6 +18,7 @@
 package Language.Execution {
 
 	import Language.Tokens.*
+	import World.*;
 
 	public class ExecutionNode {
 		public static const TYPE_VOID:int = 0;
@@ -188,10 +189,10 @@ package Language.Execution {
 			scopeHandler = scope;
 		}
 
-		public function attachScope(scope:Object)
+		public function attachScope(scope:ProgrammableObject)
 		{
 			if(scopeHandler!=null)
-			scopeHandler.enterObjectScope(scope);
+				scopeHandler.enterObjectScope(scope);
 		}
 
 /************************* TREE SORTING FUNCTIONALITY, FOR EXPRESSION SORTING **********/

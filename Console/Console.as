@@ -21,7 +21,7 @@ package Console {
 			parser = backend;
 			backend.setOutput(printOutput);
 			text = new CodeField(x, y, width, height);
-			var testString = "trace(\"15#sHello World!15#s\");\n0#mxVelocity = 3;0#m";
+			var testString = "trace(\"15#sHello World!15#s\");\n0#mif(xVelocity < 10)\n{\n    xVelocity = xVelocity + 1;\n} if ( x > 500 ) { xVelocity = 0 - 20; } 0#m";
 			text.loadText(testString);
 
 			output = new TextField();
@@ -82,6 +82,13 @@ package Console {
 
 			txt.replaceText(txt.caretIndex,txt.caretIndex,"\t");
 			txt.setSelection(txt.caretIndex+1, txt.caretIndex+1);
+		}
+
+		public function compileToTree()
+		{
+			// Attach the objectScope to the generated ExecutionTree
+			var tree = parser.parseString(text.getText(), objectScope);
+			objectScope.setCode(tree);
 		}
 
 		public function runCode(e:Event)

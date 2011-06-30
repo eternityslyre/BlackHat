@@ -70,7 +70,7 @@ package World
 			protectedObjects.visible = false;
 			exposedObjects = new MovieClip();
 			ball = new Ball(150, 100,2,2);
-			for(var i = 0; i < 5; i++)
+			for(var i = 0; i < 10; i++)
 			{
 				trace("create ball "+i);
 				var ball2 = new Ball(50+200/10*i,10+350/10*i, Math.random()*10, Math.random()*10);

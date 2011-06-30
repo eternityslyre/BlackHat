@@ -66,7 +66,7 @@ package Language.Execution
 			if(attachedObject != null && attachedObject.hasOwnProperty(identifier))
 			{
 				out = attachedObject[identifier];
-				trace("Our external scope finds: "+out);
+				//trace("Our external scope finds: "+out);
 				if(out != null && 
 					(expectedType==null || typeof(out)==expectedType))
 					return out;
