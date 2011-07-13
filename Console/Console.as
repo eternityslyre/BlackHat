@@ -16,40 +16,20 @@ package Console {
 		private var parser:Parser;
 		private var objectScope:Object;
 		private var cycleWindow:TextField;
+		private var defaultFormat:TextFormat;
 
 		public function Console(x:int, y:int, width:int, height:int, backend:Parser){
 			parser = backend;
 			backend.setOutput(printOutput);
 			text = new CodeField(x, y, width, height);
 			var testString = "0#mif(xVelocity < 10)\n{\n    xVelocity = xVelocity + 1;\n}0#m"+
-			"\ntrace(\"15#sHello World!!15#s\");\n0#mif ( x > 500 ) { xVelocity = 0 - 20; } 0#m";
+			"\ntrace(\"15#sHello World!!15#s\" + xVelocity);\n0#mif ( x > 500 ) { xVelocity = 0 - 20; } 0#m";
 			text.loadText(testString);
 
-			output = new TextField();
-			/*
-			output.type = TextFieldType.DYNAMIC;
-			//output.background = true;
-			output.backgroundColor = 0x000000;
-			output.border = true;
-			output.borderColor = 0x00dd00;
-			output.x = x;
-			output.y = y+height*0.5;
-			output.width = width;
-			output.height = height*0.5;
-			output.multiline = true;
-			output.wordWrap = true;
-			output.mouseWheelEnabled = true;
-			*/
 
-            var format:TextFormat = new TextFormat();
-            format.font = "Verdana";
-            format.color = 0x00dd00;
-            format.size = 10;
 
-			output.defaultTextFormat = format;
 
 			addChild(text);
-			//addChild(output);
 
 			cycleWindow = new TextField();
 			cycleWindow.type = TextFieldType.INPUT;
@@ -57,15 +37,27 @@ package Console {
 			cycleWindow.backgroundColor = 0x000000;
 			cycleWindow.border = true;
 			cycleWindow.borderColor = 0x00dd00;
-			cycleWindow.x = x + width + 10;
-			cycleWindow.y = y+10;
 			cycleWindow.width = 60;
 			cycleWindow.height = 15;
+			cycleWindow.x = x + width - cycleWindow.width; 
+			cycleWindow.y = y;
 			cycleWindow.multiline = true;
 			cycleWindow.wordWrap = true;
 			cycleWindow.mouseWheelEnabled = true;
-			cycleWindow.defaultTextFormat = format;
+			cycleWindow.defaultTextFormat = getConsoleTextFormat();
 			addChild(cycleWindow);
+		}
+
+		private function getConsoleTextFormat()
+		{
+			if(defaultFormat == null)
+			{
+				defaultFormat = new TextFormat();
+				defaultFormat.font = "Verdana";
+				defaultFormat.color = 0x00dd00;
+				defaultFormat.size = 10;
+			}
+			return defaultFormat;
 		}
 
 		public function addRunButton()
@@ -77,6 +69,25 @@ package Console {
 			addChild(runButton);
 		}
 
+		private function initializeOutput()
+		{
+			trace("initializing output");
+			output = new TextField();
+			output.type = TextFieldType.DYNAMIC;
+			//output.background = true;
+			output.backgroundColor = 0x000000;
+			//output.border = true;
+			//output.borderColor = 0x00dd00;
+			output.x = 0;
+			output.y = 0;
+			output.width = stage.width;
+			output.height = 100;
+			output.multiline = true;
+			output.wordWrap = true;
+			output.mouseWheelEnabled = true;
+			output.defaultTextFormat = getConsoleTextFormat();
+			stage.addChild(output);
+		}
 
 		private function TextKeyFocusChange(e:FocusEvent):void
 		{
@@ -92,6 +103,11 @@ package Console {
 		{
 			// Attach the objectScope to the generated ExecutionTree
 			var tree = parser.parseString(text.getText(), objectScope);
+			if(cycleWindow.text.length>0)
+			{
+				var num = Number(cycleWindow.text);
+				tree.setMaxCycle(num);
+			}
 			objectScope.setCode(tree);
 		}
 
@@ -134,7 +150,10 @@ package Console {
 
 		public function printOutput(s:String)
 		{
+			if(output == null)
+				initializeOutput();
 			output.appendText(s+"\n");
+			output.scrollV = output.numLines;
 		}
 
 		public function attachScope(symbol:Object)
