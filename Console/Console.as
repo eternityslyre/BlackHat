@@ -66,12 +66,15 @@ package Console {
 			cycleWindow.mouseWheelEnabled = true;
 			cycleWindow.defaultTextFormat = format;
 			addChild(cycleWindow);
+		}
 
+		public function addRunButton()
+		{
 			runButton = new RunButton();
 			runButton.x = x + width + 10;
 			runButton.y = y + height -runButton.height;
 			runButton.addEventListener(MouseEvent.CLICK, runCode);
-			//addChild(runButton);
+			addChild(runButton);
 		}
 
 

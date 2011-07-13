@@ -16,7 +16,7 @@ package Language.Execution {
 		private var operation:String;
 		private static var operations:Object;
 		
-		public function InfixOpNode(lhs:String, args:Array, stackArgs:Array)
+		public function InfixOpNode(lhs:String, args:Array)
 		{
 			if(operations == null)
 				initOperations();

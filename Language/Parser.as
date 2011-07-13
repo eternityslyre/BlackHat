@@ -195,7 +195,7 @@ package Language {
 				case "ForLoop":
 					return new ForLoopNode(lhs, args);
 				case "InfixOp":
-					return new InfixOpNode(lhs, args, stackArgs);
+					return new InfixOpNode(lhs, args);
 				case "Expression":
 					return new ExpressionNode(lhs, args);
 				case "Value":
