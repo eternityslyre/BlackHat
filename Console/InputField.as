@@ -35,9 +35,9 @@ package Console
 			updateCallback = callback;
 			id = index;
 			line = displayField.getLineIndexOfChar(startIndex);
-			realign();
 			maxLength = max;
 			text = fullText.text.substring(start, end);
+			realign();
 			red = 0;
 			green = 0xdd;
 			blue = 0;
@@ -61,14 +61,25 @@ package Console
 			y = displayField.y + metrics.height*line;
 			width = displayField.width;
 			// the 4 comes from the top and bottom gutters 
-			height = 150;//metrics.height*(endLine - line + 1) + 4;
+			/*
+			trace("line height is "+metrics.height+", last line is "+endLine+", first line is "+line);
+			trace("first character is ["+text.substring(startIndex, startIndex+1)+"], last character is ["
+										+text.substring(endIndex, endIndex+1)+"]");
+			trace("correct height is "+(metrics.height*(endLine-line+1)+4));
+			var newHeight = (metrics.height*(endLine-line+1)+4);
+			height = newHeight; */
+			height = metrics.height*(1+numLines)+4;
 		}
 
 		private function lengthCheck(e:TextEvent)
 		{
-			if(maxLength > 0 &&e.text.length + text.length > maxLength)
+			if(e.text == "`" ||
+				(maxLength > 0 && e.text.length + text.length > maxLength))
+			{
 				e.preventDefault();
-			//realign();
+				return;
+			}
+			realign();
 		}
 
 		public function setColorRGB(r:int, g:int, b:int)

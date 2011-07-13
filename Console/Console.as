@@ -21,7 +21,8 @@ package Console {
 			parser = backend;
 			backend.setOutput(printOutput);
 			text = new CodeField(x, y, width, height);
-			var testString = "trace(\"15#sHello World!15#s\");\n0#mif(xVelocity < 10)\n{\n    xVelocity = xVelocity + 1;\n} if ( x > 500 ) { xVelocity = 0 - 20; } 0#m";
+			var testString = "0#mif(xVelocity < 10)\n{\n    xVelocity = xVelocity + 1;\n}0#m"+
+			"\ntrace(\"15#sHello World!!15#s\");\n0#mif ( x > 500 ) { xVelocity = 0 - 20; } 0#m";
 			text.loadText(testString);
 
 			output = new TextField();
@@ -70,7 +71,7 @@ package Console {
 			runButton.x = x + width + 10;
 			runButton.y = y + height -runButton.height;
 			runButton.addEventListener(MouseEvent.CLICK, runCode);
-			addChild(runButton);
+			//addChild(runButton);
 		}
 
 

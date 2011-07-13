@@ -14,32 +14,34 @@ package World
 		private var loaded:Boolean = false;
 		private var executionTree:ExecutionNode;
 		private var code:String;
+		private var loadConsole:Function;
 
 		/* Constructor to pull out all properties available for call and edit */
 		public function ProgrammableObject(txt:String = null)
 		{
 			addEventListener(MouseEvent.ROLL_OVER, rolledOver);
-			addEventListener(MouseEvent.ROLL_OUT, rolledOut);
 		}
-		public function setWorld(w:World)
+
+		public function setConsoleCallback(f:Function)
 		{
-			world = w;
+			loadConsole = f;
 		}
+
 		public function rolledOver(e:Event)
 		{
-			if(loaded)return;
-			world.loadConsole(this);
-			loaded = true;
+			//This is because not all ProgrammableObjects are necesarily Vulnerable...
+			if(loadConsole != null)
+				loadConsole(this);
 		}
 
 		public override function update(tick:Number)
 		{
-			updateInner(tick);
+			updateProgrammable(tick);
 			execute();
 		}
 
 		/* Dummy function */
-		public function updateInner(tick:Number)
+		public function updateProgrammable(tick:Number)
 		{}
 
 		public function setCode(tree:ExecutionNode)
@@ -51,10 +53,6 @@ package World
 		{
 			if(executionTree != null)
 				executionTree.run();
-		}
-		public function rolledOut(e:Event)
-		{
-			loaded = false;
 		}
 	}
 }

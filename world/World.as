@@ -32,9 +32,9 @@ package World
 		private var background:Bitmap;
 		private var foreground:Bitmap;
 
-		//rectangle representing the curtain.
+		//Rectangle representing the curtain.
 		private var curtain:Rectangle;
-		private var rectangle = new Rectangle(0,0,550,400);
+		private var BACKGROUND_RECTANGLE = new Rectangle(0,0,550,400);
 		private var origin = new Point(0,0);
 		private var colorIndex:Number;
 
@@ -52,44 +52,24 @@ package World
 						0,0,0,0.5,0
 						];
 		
-		private var ball;
-		private var paused;
 		private var ticks = 0;
 		private var glowFilter = new GlowFilter(0xffffff,0,0,0);
-
-		//HACK HACK
-		public var game:Game;
 
 		public function World()
 		{
 			trace("world creation");
 			colorIndex = 0;
-			paused = false;
 			objects = new Array();
 			protectedObjects = new MovieClip();
 			protectedObjects.visible = false;
 			exposedObjects = new MovieClip();
-			ball = new Ball(150, 100,2,2);
-			for(var i = 0; i < 10; i++)
-			{
-				trace("create ball "+i);
-				var ball2 = new Ball(50+200/10*i,10+350/10*i, Math.random()*10, Math.random()*10);
-				protectedObjects.addChild(ball2);
-				objects.push(ball2);
-				ball2.setWorld(this);
-				var ball3 = new Ball(50+200/10*i,10+350/10*i, Math.random()*10, Math.random()*10);
-				exposedObjects.addChild(ball3);
-				objects.push(ball3);
-				ball3.setWorld(this);
-				trace("end create ball "+i);
-			}
+
 			addChild(protectedObjects);
 			blurArray = new Array();
 			blurArray.push(new BlurFilter(blur_x, blur_y, blur_quality));
 			blurArray.push(new ColorMatrixFilter(backgroundMatrix));
 			glowArray = new Array();
 			glowArray.push(glowFilter);
-			//glowArray.push(new BlurFilter(blur_x, blur_y, blur_quality));
 			emptyArray = new Array();
 
 			background = new Bitmap();
@@ -98,21 +78,20 @@ package World
 			backgroundBuffer = new BitmapData(550,400);
 			addChild(background);
 			addChild(foreground);
-			exposedObjects.addChild(ball);
-			objects.push(ball);
-			ball.setWorld(this);
 			addChild(exposedObjects);
 			curtain = new Rectangle(550,400);
 		}
 
-		public function getBall()
+		public function addProtected (a:ActiveObject)
 		{
-			return ball;
+			protectedObjects.addChild(a);
+			objects.push(a);
 		}
 
-		public function loadConsole(p:ProgrammableObject)
+		public function addExposed(p:ProgrammableObject)
 		{
-			game.loadConsole(p);
+			exposedObjects.addChild(p);
+			objects.push(p);
 		}
 
 		public function pulsate()
@@ -122,7 +101,6 @@ package World
 			glowArray[0].alpha = pulseValue;
 			glowArray[0].blurX = pulseValue*2;
 			glowArray[0].blurY = pulseValue*2;
-			//glowArray[0].knockout = true;
 			exposedObjects.filters = glowArray;
 			colorIndex += 0.05;
 		}
@@ -141,30 +119,35 @@ package World
 		public function resume()
 		{
 			protectedObjects.visible = true;
+			hideCurtain();
+		}
+
+		private function hideCurtain()
+		{
 			background.visible = false;
 			foreground.visible = false;
-			paused = false;
+		}
+
+		private function showCurtain()
+		{
+			background.visible = true;
+			foreground.visible = true;
 		}
 
 		public function drawCurtain(x:Number, y:Number, width:Number, height:Number) 
 		{
-			background.visible = true;
-			foreground.visible = true;
 			curtain.x = x;
 			curtain.y = y;
 			curtain.width = width;
 			curtain.height = height;
+			showCurtain();
+			drawObjects();
+			drawFilters();
 
-			//draw black background
-			var backgroundColor = 0x0;
-			backgroundData.fillRect(rectangle, backgroundColor);
-			backgroundBuffer.fillRect(rectangle, backgroundColor);
-			//set up the blur filter
-			backgroundBuffer.draw(exposedObjects);
-			protectedObjects.visible = true;
-			backgroundData.draw(protectedObjects);
-			protectedObjects.visible = false;
+		}
 
+		private function drawFilters()
+		{
 			var pulseValue = (1-Math.cos(colorIndex))/2*8;
 			glowArray[0].alpha = pulseValue;
 			glowArray[0].blurX = pulseValue*2;
@@ -177,15 +160,18 @@ package World
 			foreground.bitmapData = backgroundBuffer;
 		}
 
-		public function freeze()
+		private function drawObjects()
 		{
-			
-			//trace("pausing game...");
-			//exposedObjects.filters = glowArray;
-			paused = true;
-
-			//flag the world to pause
-			//paused = true;
+			//draw black background
+			var backgroundColor = 0x0;
+			backgroundData.fillRect(BACKGROUND_RECTANGLE, backgroundColor);
+			backgroundBuffer.fillRect(BACKGROUND_RECTANGLE, backgroundColor);
+			//set up the blur filter
+			backgroundBuffer.draw(exposedObjects);
+			protectedObjects.visible = true;
+			backgroundData.draw(protectedObjects);
+			protectedObjects.visible = false;
 		}
+
 	}
 }

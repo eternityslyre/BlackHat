@@ -49,11 +49,12 @@ package Language.Execution {
 					},
 					"number": {
 						"number": function(lhs, rhs) { return Number(lhs.run()) + Number(rhs.run()); },
-						"variable": function(lhs, rhs) { return Number(lhs.run()) + Number(rhs.run()) } 
+						"variable": function(lhs, rhs) { return Number(lhs.run()) + Number(rhs.run()) },
+						"number": function(lhs, rhs) { return Number(lhs.run()) + "" + String(rhs) }
 					},
 					"variable": {
-						"string": function(lhs, rhs) { return String(lhs.run()) + String(rhs.run()) },
-						"number": function(lhs, rhs) { return Number(lhs.run()) + Number(rhs.run()) },
+						"string": function(lhs, rhs) { return operations["+"][lhs.innerType()][rhs.getType()](lhs,rhs); },
+						"number": function(lhs, rhs) { return operations["+"][lhs.innerType()][rhs.getType()](lhs,rhs); },
 						"variable": 
 							function(lhs, rhs) {
 								return operations["+"][lhs.innerType()][rhs.innerType()](lhs, rhs); 
@@ -117,15 +118,15 @@ package Language.Execution {
 						"variable": function(lhs, rhs) { return Boolean(lhs.run()) == Boolean(rhs.run()); }
 					},
 					"string": {
-						"string": function(lhs, rhs) { return String(lhs.run()).localeCompare(String(rhs.run()))==0; },
-						"variable": function(lhs, rhs) { return String(lhs.run()).localeCompare(String(rhs.run()))==0; }
+						"string": function(lhs, rhs) { return String(lhs.run()) == String(rhs.run()); },
+						"variable": function(lhs, rhs) { return String(lhs.run()) == String(rhs.run()); }
 					},
 					"number": {
 						"number": function(lhs, rhs) { return Number(lhs.run()) == Number(rhs.run()); },
 						"variable": function(lhs, rhs) { return Number(lhs.run()) == Number(rhs.run()) } 
 					},
 					"variable": {
-						"string": function(lhs, rhs) { return String(lhs.run()).localeCompare(String(rhs.run()))==0; },
+						"string": function(lhs, rhs) { return String(lhs.run()) == String(rhs.run()); },
 						"number": function(lhs, rhs) { return Number(lhs.run()) == Number(rhs.run()); },
 						"boolean": function(lhs, rhs) { return Number(lhs.run()) == Number(rhs.run()); },
 						"variable": 
@@ -140,15 +141,15 @@ package Language.Execution {
 						"variable": function(lhs, rhs) { return Boolean(lhs.run()) != Boolean(rhs.run()); }
 					},
 					"string": {
-						"string": function(lhs, rhs) { return String(lhs.run()).localeCompare(String(rhs.run()))!=0; },
-						"variable": function(lhs, rhs) { return !String(lhs.run()).localeCompare(String(rhs.run()))!=0; }
+						"string": function(lhs, rhs) { return String(lhs.run()) != String(rhs.run()); },
+						"variable": function(lhs, rhs) { return !String(lhs.run()) != String(rhs.run()); }
 					},
 					"number": {
 						"number": function(lhs, rhs) { return Number(lhs.run()) != Number(rhs.run()); },
 						"variable": function(lhs, rhs) { return Number(lhs.run()) != Number(rhs.run()) } 
 					},
 					"variable": {
-						"string": function(lhs, rhs) { return String(lhs.run()).localeCompare(String(rhs.run()))==0; },
+						"string": function(lhs, rhs) { return String(lhs.run()) != String(rhs.run()); },
 						"number": function(lhs, rhs) { return Number(lhs.run()) != Number(rhs.run()); },
 						"boolean": function(lhs, rhs) { return Number(lhs.run()) != Number(rhs.run()); },
 						"variable": 
