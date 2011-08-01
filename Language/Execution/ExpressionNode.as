@@ -99,6 +99,17 @@ package Language.Execution {
 		public override function run():Object{
 			if(children.length==1)
 				return children[0].run();
+			if(children.length==2)
+			{
+				var operator = children[0];
+				var operand = children[1];
+				if(children[0] is ExecutionNode)
+				{
+					operator = children[1];
+					operand = children[0];
+				}
+				return operator.operate(operand);
+			}
 			var result = children[1].operate(children[0], children[2]);
 			return result;
 		}

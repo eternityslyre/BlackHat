@@ -77,7 +77,7 @@ package Language.Tokens {
 			//trace(tokenClasses.length+", "+tokenClassTypes.length);
 			for(var i = 0; i < tokenClasses.length; i++){
 				//build the tokenclass
-				tokenMapping[i] = [tokenClasses[i].substring(0,tokenClasses[i].length-1)];
+				tokenMapping[i] = tokenClasses[i].substring(0,tokenClasses[i].length-1);
 				tokenMapping[tokenClasses[i].substring(0, tokenClasses[i].length-1)] = i;
 				//trace("mapping: "+tokenMapping[i]+", to "+i+", as shown: "+tokenMapping[tokenClasses[i].substring(0, tokenClasses[i].length-1)]);
 				//if it's a regex, handle it accordingly.
@@ -101,10 +101,10 @@ package Language.Tokens {
 		}
 
 		private function identify(s:String) : int{
-			if(dictionary.isToken(s)>=0)
+			if(dictionary.parseTokenType(s)>=0)
 			{
 				//trace(s+"is a keyword!");
-				return tokenMapping[dictionary.isToken(s)];
+				return tokenMapping[dictionary.parseTokenType(s)];
 			}
 			else {
 				for(var typename in regularTypes){
@@ -135,14 +135,12 @@ package Language.Tokens {
 
 		public function nextToken():Token{
 			//trace("start:");
-			locate();
 			scanIndex = index;
 			var current = "";
 
 			//skip invalid characters
 			while(lexicon[code.charAt(scanIndex)] == undefined && scanIndex < code.length){
 				//trace("skip "+code.charAt(scanIndex)+", next is ["+code.charAt(scanIndex+1)+"]");
-				locate();
 				scanIndex++;
 				lastIndex = index;
 				index = scanIndex;
@@ -169,7 +167,6 @@ package Language.Tokens {
 			//parse until the next invalid character
 				//trace((invalidCharacter(code.charAt(scanIndex)))+", "+(scanIndex<code.length));
 			while(!invalidCharacter(code.charAt(scanIndex))&&scanIndex < code.length){
-				locate();
 				//trace((invalidCharacter(code.charAt(scanIndex)))+", "+(scanIndex<code.length));
 				current+=code.charAt(scanIndex);
 				scanIndex++;
@@ -179,10 +176,8 @@ package Language.Tokens {
 			//trace("Tokenify result "+out);
 			if(out!=null){
 				//trace("Moving index! Found "+out.getSymbol() +", scan  "+scanIndex+", index "+index+", "+code.length);
-				locate();
 				lastIndex = index;
 				index = scanIndex;
-				locate();
 				//trace("finish: "+code+", index "+index+", character ["+code.charAt(index)+"]");
 			}
 			else {
@@ -194,7 +189,6 @@ package Language.Tokens {
 		
 		private function tokenify(s:String){
 			if(s.length <= 0) return null;
-			locate();
 			var type = identify(s);
 			if(type > 0){
 				//trace("Returning new token, type "+tokenMapping[type]+", string "+s);
@@ -202,7 +196,6 @@ package Language.Tokens {
 			}
 			if(identify(s)==0){
 				//trace("Returning new token, type "+tokenMapping[type]+", position "+index+",character "+code.charAt(index)+", string "+s);
-				locate();
 				return new Token(s,s);
 			}
 			

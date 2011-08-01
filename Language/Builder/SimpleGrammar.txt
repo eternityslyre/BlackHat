@@ -59,6 +59,8 @@ Expression->
 Expression InfixOp Value
 Value
 FunctionCall
+PrefixOp Value
+Value PostfixOp
 
 InfixOp->
 +
@@ -71,6 +73,16 @@ InfixOp->
 <=
 >=
 =
+
+PrefixOp->
+++
+--
+-
+!
+
+PostfixOp->
+++
+--
 
 Value->
 string

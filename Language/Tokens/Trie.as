@@ -13,12 +13,12 @@
 			type = -1; //TYPE_INVALID;
 		}
 
-		public function isToken(s:String, index:int = 0):int{
+		public function parseTokenType(s:String, index:int = 0):int{
 			if(s.length == index)
 				return type;
 			if(children[s.charAt(index)] == null) 
 				return -1;
-			return children[s.charAt(index)].isToken(s,index+1);
+			return children[s.charAt(index)].parseTokenType(s,index+1);
 		}
 
 		public function isSubstring(s:String, index:int = 0){
