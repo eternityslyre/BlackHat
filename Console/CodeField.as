@@ -28,7 +28,7 @@ package Console
 			filterArray[0] = new GlowFilter(0xffffff,0,0,0);
 			inputFields = new Array();
 			displayField = new TextField();
-			displayField.type = TextFieldType.INPUT;//DYNAMIC;
+			displayField.type = TextFieldType.DYNAMIC;
 			displayField.backgroundColor = 0x000000;
 			displayField.background = true;
 			displayField.border = true;

@@ -48,12 +48,9 @@ package Language.Execution {
 							trace("Incorrect type, type is: "+operand.getType()); 
 							this.throwError("CANNOT ADD NON-NUMBER VARIABLE");
 						}
-						trace( "Executing ++ postfix");
 						var result = operand.run();
-						trace("Original result: "+result);
 						operand.assign(result + 1, operand.innerType());
 						var newResult = operand.run();
-						trace("New result: "+newResult);
 						return result;
 						},
 					"null": function(operand) { this.throwError("CANNOT ADD NULL"); } 

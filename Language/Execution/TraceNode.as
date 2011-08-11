@@ -24,8 +24,9 @@ package Language.Execution {
 
 		public override function run():Object
 		{
-			trace("TRACE: "+children[2].run());
-			printOutput(children[2].run());
+			var result = children[2].run();
+			trace("TRACE: "+result);
+			printOutput(result);
 			complete = true;
 			return null;
 		}
