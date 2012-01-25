@@ -18,16 +18,16 @@ package Console {
 		private var cycleWindow:TextField;
 		private var defaultFormat:TextFormat;
 
+		private var testString1 = "trace(\"START\");\nvar testx = 0;\ntrace(testx++);\ntrace(testx);trace(\"END\");";
+		private var testString2 = "0#mif(xVelocity < 10)\n{\n    xVelocity = xVelocity + 1;\n}0#m"+
+			"\ntrace(\"15#sHello World!!15#s\" + xVelocity);\n0#mif ( x > 500 ) { xVelocity = 0 - 20; } 0#m";
+
 		public function Console(x:int, y:int, width:int, height:int, backend:Parser){
+			var testString = testString2;
 			parser = backend;
 			backend.setOutput(printOutput);
 			text = new CodeField(x, y, width, height);
-			var testString = "trace(\"START\");\nvar testx = 0;\ntrace(testx++);\ntrace(testx);trace(\"END\");";//"0#mif(xVelocity < 10)\n{\n    xVelocity = xVelocity + 1;\n}0#m"+
-			//"\ntrace(\"15#sHello World!!15#s\" + xVelocity);\n0#mif ( x > 500 ) { xVelocity = 0 - 20; } 0#m";
 			text.loadText(testString);
-
-
-
 
 			addChild(text);
 

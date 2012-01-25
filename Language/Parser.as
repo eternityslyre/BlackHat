@@ -24,6 +24,12 @@ package Language {
 			grammar = new Grammar(grammarFile, catchCall);
 			token = new TokenParser(tokenFile, lexicon, catchCall);
 			callback = call;
+			printOutput = consoleOut;
+		}
+
+		private function consoleOut(s:String)
+		{
+			trace(s);
 		}
 
 		private var called:int = 0;

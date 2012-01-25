@@ -9,6 +9,7 @@ ControlFlow
 
 Block->
 { Statements }
+{ }
 
 ControlFlow->
 WhileLoop
@@ -35,6 +36,11 @@ Expression
 Declaration->
 var variable = Expression
 var variable
+var variable = new Object ( [Parameters] )
+
+Object->
+ReservedClass
+variable 
 
 Function->
 variable ( [Parameters] ) Block
@@ -89,5 +95,10 @@ string
 number
 variable
 boolean
+ArrayAccess
+
+ArrayAccess->
+variable [ number ]
+variable [ variable ]
 
 

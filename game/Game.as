@@ -40,7 +40,6 @@ package Game
 		private var gameSpeed:Number = WORLD_SPEED;
 		private var framesPerSecond = WORLD_FPS;
 
-
 		/* Hacking target */
 		private var target:ProgrammableObject;
 		private var drawDistance:Number = 0;
