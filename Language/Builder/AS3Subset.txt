@@ -1,0 +1,104 @@
+Program->
+Statements
+
+Statements-> 
+Statements ControlFlow
+Statements Statement ;
+Statement ;
+ControlFlow
+
+Block->
+{ Statements }
+{ }
+
+ControlFlow->
+WhileLoop
+IfElse
+ForLoop
+function Function
+
+Statement->
+Expression
+Trace
+Declaration
+Return
+
+Return->
+return Expression
+
+FunctionCall->
+variable ( [Arguments] )
+
+Arguments->
+Arguments , Expression
+Expression
+
+Declaration->
+var variable = Expression
+var variable
+var variable = new Object ( [Parameters] )
+
+Object->
+ReservedClass
+variable 
+
+Function->
+variable ( [Parameters] ) Block
+
+Parameters->
+Parameters , variable
+variable
+
+IfElse->
+if ( Statement ) Block [else [if ( Statement )] Block]
+
+WhileLoop->
+while ( Statement ) Block
+
+ForLoop->
+for ( Statement ; Statement ; Statement ) Block
+
+Trace->
+trace ( Expression )
+
+Expression->
+Expression InfixOp Value
+Value
+FunctionCall
+PrefixOp Value
+Value PostfixOp
+
+InfixOp->
++
+-
+*
+==
+!=
+<
+>
+<=
+>=
+=
+
+PrefixOp->
+++
+--
+-
+!
+
+PostfixOp->
+++
+--
+
+Value->
+string
+number
+variable
+boolean
+ArrayAccess
+
+ArrayAccess->
+variable [ number ]
+variable [ variable ]
+
+
