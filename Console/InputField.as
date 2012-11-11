@@ -11,6 +11,7 @@ package Console
 {
 	import flash.text.*;
 	import flash.events.*;
+	import flash.geom.*;
 	public class InputField extends TextField
 	{
 		private var startIndex:int;
@@ -53,8 +54,15 @@ package Console
 		{
 			var line = displayField.getLineIndexOfChar(startIndex);
 			var endLine = displayField.getLineIndexOfChar(endIndex-1);
+			trace("Line found:" +line);
 			var xStart = displayField.getCharBoundaries(startIndex);
 			var xEnd = displayField.getCharBoundaries(endIndex-1);
+			//Handle empty lines, only possible for multiline situations.
+			if ( xEnd == null)
+			{
+				xEnd = new Rectangle(x, y, width, height);
+			}
+			trace("coords found: (" +xStart+","+xEnd+")");
 			var newWidth = xEnd.x + xEnd.width - xStart.x;
 			var metrics = displayField.getLineMetrics(line);
 			x = displayField.x + xStart.x - 2;

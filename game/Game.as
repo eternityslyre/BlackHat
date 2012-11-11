@@ -11,6 +11,7 @@ package Game
 	import World.*;
 	import flash.events.*;
 	import flash.display.*;
+	import flash.geom.*;
 	import flash.filters.*;
 	import flash.utils.getTimer;
 	import flash.text.*;
@@ -143,13 +144,28 @@ package Game
 		{
 				var startx = 0;
 				var endx = stage.width;
-				var starty = stage.height*consolePercentage;
-				var endy = starty;
+				var endy = stage.height*consolePercentage;
+				var starty = endy;
+				drawGradient(startx, starty - 100, endx, endy);
 				drawLine(5, 0xffffff, 1, startx, starty, endx, endy);
 		}
-		public function drawLine(width:Number, color:int, stroke:Number, startX, startY, endX, endY)
+		public function drawGradient(startX:Number, startY:Number, endX:Number, endY:Number)
 		{
-			graphics.lineStyle(width, color, stroke);
+			var fillType:String = GradientType.LINEAR;
+			var colors:Array = [0x000000, 0xFFFFFF]
+			var ratios:Array = [0x00,0xff];
+			var alphas:Array = [0,1];
+			var matr:Matrix = new Matrix();
+			matr.createGradientBox(stage.width,150,Math.PI/2,0,startY);
+			var spreadMethod:String = SpreadMethod.PAD;
+			this.graphics.beginGradientFill(fillType,colors,alphas,ratios,matr,spreadMethod);
+			this.graphics.drawRect(startX,startY,endX-startX,endY-startY);
+			this.graphics.endFill();
+
+		}
+		public function drawLine(width:Number, color:int, alpha:Number, startX, startY, endX, endY)
+		{
+			graphics.lineStyle(width, color, alpha);
 			graphics.moveTo(startX, startY);
 			graphics.lineTo(endX, endY);
 		}

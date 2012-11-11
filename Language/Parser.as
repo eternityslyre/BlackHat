@@ -52,14 +52,19 @@ package Language {
 			printOutput = out;
 		}
 
-		public function parseString(input:String, attachedScope:Object = null):ExecutionNode {
+		private function initParser()
+		{
 			error = false;
 			scopeHandler = new ScopeHandler();
-			scopeHandler.enterObjectScope(attachedScope);
 			stack = new Array();
 			executionTree = new Array();
 			stack.push("ZZ");
 			stack.push(0);
+		}
+
+		public function parseString(input:String, attachedScope:Object = null):ExecutionNode {
+			initParser();
+			scopeHandler.enterObjectScope(attachedScope);
 			var next:Token;
 			token.loadString(input+"$");
 			next = token.nextToken();
@@ -155,37 +160,6 @@ package Language {
 
 		private function makeNode(lhs:String, args:Array, stackArgs:Array){
 			switch(lhs){
-				/*
-				case "IfClause":
-					return new IfClause(args);
-					break;
-				case "ElseClause":
-					return new ElseClause(args);
-					break;
-				case "Statements":
-				case "Statement":
-					return new StatementsNode(args);
-				break;
-				case "Arguments":
-				case "Argument":
-					return new ArgumentsNode(args);
-				break;
-				case "Program":
-					return new ExecutionNode(args);
-				break;
-				case "Expression":
-					return new ExpressionNode(args);
-				break;
-				case "Literal":
-					return new LiteralNode(args);
-				break;
-				case "Value":
-					return new ValueNode(args);
-				break;
-				case "FunctionReturn":
-					return new FunctionReturnNode(args);
-				break;
-				*/
 				case "ControlFlow":
 					return new ControlFlowNode(lhs, args, scopeHandler);
 				case "FunctionCall":
@@ -223,6 +197,8 @@ package Language {
 					var out = new ExecutionNode(lhs, args);	
 					scopeHandler.exitScope();
 					return out;
+				case "Instantiation":
+					return new InstantiationNode(lhs, args);
 				default:
 					return new ExecutionNode(lhs, args);
 

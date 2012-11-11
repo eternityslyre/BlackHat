@@ -36,11 +36,17 @@ Expression
 Declaration->
 var variable = Expression
 var variable
-var variable = new Object ( [Parameters] )
+var variable = Instantiation
+
+Instantiation->
+new Object ( [Parameters] )
 
 Object->
 ReservedClass
 variable 
+
+ReservedClass->
+Array
 
 Function->
 variable ( [Parameters] ) Block
@@ -98,7 +104,6 @@ boolean
 ArrayAccess
 
 ArrayAccess->
-variable [ number ]
-variable [ variable ]
+variable [ Expression ]
 
 

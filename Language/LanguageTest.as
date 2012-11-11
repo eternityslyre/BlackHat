@@ -12,7 +12,10 @@ package Language
 			"trace(\"hello world\");",
 			"while(true) {}",
 			"for(var i =0; i < 10; i++){}",
-			"function test(x, y, z){}"
+			"while(true){}",
+			"function test(x, y, z){}",
+			"var x = new Array(); var y = x[2];",
+			"var array = new Array();"
 		];
 		public var invalidTestStrings:Array =
 		[
@@ -22,8 +25,7 @@ package Language
 			"for(var x =0;blargh;)",
 			"for(var i=0;i<10;i++)",
 			"while(10){}",
-			"while(true*4){}",
-			"while(true){}"
+			"while(true*4){}"
 		];
 		public function LanguageTest(parser:Parser)
 		{
@@ -32,7 +34,8 @@ package Language
 			{
 				trace("Testing: "+validTestStrings[testString]);
 				var node = parser.parseString(validTestStrings[testString]);
-				if(node == null) trace("Compilation failed.");
+				if(node == null) trace("===================!!======================Compilation failed===================!!=======================\n"+
+					"on string: "+validTestStrings[testString]);
 				else trace("Compilation successful, as expected.");
 			}
 			//Check that all invalid test strings are invalid.
@@ -40,7 +43,8 @@ package Language
 			{
 				trace("Testing: "+invalidTestStrings[testString]);
 				var node = parser.parseString(invalidTestStrings[testString]);
-				if(node != null) trace("Compilation succeeded!?.");
+				if(node != null) trace("======================!!=====Compilation succeeded!?===============!!======================\n"+
+					"on string: "+invalidTestStrings[testString]);
 				else trace("Compilation failed, as expected.");
 			}
 		}

@@ -14,6 +14,8 @@ else
 {
 }
 <
+[
+]
 >
 <=
 >=
@@ -24,6 +26,8 @@ for
 var
 function
 ,
+new
+Array
 
 number:
 /^\d+(\.\d+)?$/
