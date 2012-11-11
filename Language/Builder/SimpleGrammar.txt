@@ -101,9 +101,6 @@ string
 number
 variable
 boolean
-ArrayAccess
-
-ArrayAccess->
 variable [ Expression ]
 
 

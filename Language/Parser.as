@@ -199,6 +199,10 @@ package Language {
 					return out;
 				case "Instantiation":
 					return new InstantiationNode(lhs, args);
+				case "ArrayAccess":
+					return new ArrayAccessNode(lhs, args, scopeHandler);
+				case "ReservedClass":
+					return new ReservedClassNode(lhs, args, scopeHandler);
 				default:
 					return new ExecutionNode(lhs, args);
 

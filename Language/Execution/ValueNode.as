@@ -18,6 +18,8 @@ package Language.Execution {
 		private var children:Array;
 		private var type:String;
 		private var scopeHandler:ScopeHandler;
+		private var arrayIndexNode:ExpressionNode;
+		private var arrayIndex:int = -1;
 
 		public function ValueNode(lhs:String, args:Array, stackArgs:Array, scope:ScopeHandler)
 		{
@@ -30,7 +32,7 @@ package Language.Execution {
 				case "variable":
 					variable = stackArgs[0].getSymbol();
 					var resolved = scopeHandler.resolve(variable) === undefined; 
-					trace("resolved "+resolved);
+					trace("resolving "+variable+": "+resolved);
 					if(scopeHandler.resolve(variable) === undefined || scopeHandler.error())
 					{
 						throwError("Unresolved variable "+variable+" referenced.");
@@ -53,6 +55,10 @@ package Language.Execution {
 				default:
 					trace("Unrecognized type..."+out.getSymbol());
 			}
+			if(args.length > 1) //Handle the array access
+			{
+				arrayIndexNode = args[2];
+			}
 		}
 
 		public override function run():Object{
@@ -68,6 +74,12 @@ package Language.Execution {
 					{
 						throwError("Unresolved variable "+variable);
 					}
+					if(arrayIndexNode != null && arrayIndexNode !== undefined)
+					{
+						arrayIndex = int(arrayIndexNode.run());
+						var result = out[arrayIndex];
+						out = out[arrayIndex];
+					}
 					return out;
 				case TYPE_BOOLEAN:
 					return boolean;
@@ -75,13 +87,21 @@ package Language.Execution {
 			return null;
 		}
 
-		public override function assign(arg:Object, typeAssigned:String){
+		public override function assign(arg:Object, typeAssigned:String)
+		{
 			if(getReturnType() != TYPE_VARIABLE)
 			{
 				throwError("CANNOT ASSIGN TO A NON-REFERENCE VARIABLE");
 				return;
 			}
-			scopeHandler.assign(arg, variable, typeAssigned);
+			if(arrayIndexNode != null && arrayIndexNode !== undefined)
+			{
+				var out = scopeHandler.resolve(variable);
+				arrayIndex = int(arrayIndexNode.run());
+				out[arrayIndex] = arg;
+			}
+			else 
+				scopeHandler.assign(arg, variable, typeAssigned);
 		}
 
 		public override function innerType()
@@ -93,6 +113,8 @@ package Language.Execution {
 				case TYPE_STRING:
 					return "string";
 				case TYPE_VARIABLE:
+					if(arrayIndexNode != null && arrayIndexNode !== undefined)
+						return "variable";
 					return scopeHandler.getType(variable);
 				case TYPE_BOOLEAN:
 					return "boolean";

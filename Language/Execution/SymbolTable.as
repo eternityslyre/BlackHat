@@ -18,14 +18,13 @@ package Language.Execution
 		{
 			if(data[identifier]===undefined)
 			{
-				//trace("VARIABLE NOT DECLARED OR DOES NOT EXIST: "+identifier);
+				trace("VARIABLE NOT DECLARED OR DOES NOT EXIST: "+identifier);
 			}
 			if(expectedtype!=null && types[identifier] != expectedtype)
 			{
 				trace("INCORRECT TYPE EXPECTED: "+expectedtype+",ACTUAL:"+types[identifier]);
 				return null;
 			}
-
 			return data[identifier];
 		}
 
@@ -36,7 +35,6 @@ package Language.Execution
 				trace("SET FAILED! VARIABLE NOT DECLARED OR DOES NOT EXIST: "+identifier);
 				return false;;
 			}
-
 			data[identifier] = arg;
 			types[identifier] = type;
 			return true;
