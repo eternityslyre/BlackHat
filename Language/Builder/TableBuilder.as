@@ -180,30 +180,7 @@ package Language.Builder {
 					states[next].add(newRule);
 					queue.push(states[next]);
 					queue.push(next);
-					if(newRule.complete()){
-						//trace("STATE "+next+" ACCEPTS "+symb+" to complete rule: "+newRule.getAnnotatedForm()+" number "+newRule.getRuleNumber());
-						//EVERY ACTION MUST RESULT IN A REDUCE!
-						var symset = grammar.getSymbolSet();
-						//THE END!!
-						if(newRule.getRuleNumber() != 0){
-							for(var s in symset){
-								var originalValue = actionTable[next][symset[s]];
-								if(originalValue !== undefined){
-									//trace("replacing "+original+" with "+"r"+newRule.getRuleNumber());
-								}
-								if(actionTable[next][symset[s]]!= undefined){
-									trace("OVERWRITING A SHIFT RUEL!!:!");
-									trace("state "+next+", symbol "+symset[s]+",  original rule "+actionTable[next][symset[s]]);
-									trace("replacing with "+"r"+newRule.getRuleNumber());
-									terminate = true;
-									return;
-								}
-								actionTable[next][symset[s]] = "r"+newRule.getRuleNumber();
-							}
-							actionTable[next]["$"] = "r"+newRule.getRuleNumber();
-						}
-						else actionTable[next]["$"] = "acc";
-					}
+					writeRule(grammar, newRule, next);
 					ruleStateMap[newRule.getAnnotatedForm()] = next;
 				}
 			}
@@ -212,32 +189,7 @@ package Language.Builder {
 				//trace(states[stateMap[lastID][symb]].contains(newRule));
 				ruleStateMap[newRule.getAnnotatedForm()] = stateMap[lastID][symb];
 				var nextState = stateMap[lastID][symb];
-				if(newRule.complete()){
-					//trace("STATE "+next+" ACCEPTS "+symb+" to complete rule: "+newRule.getAnnotatedForm()+" number "+newRule.getRuleNumber());
-					//EVERY ACTION MUST RESULT IN A REDUCE!
-					var symset = grammar.getSymbolSet();
-					//THE END!!
-					if(newRule.getRuleNumber() != 0){
-						for(var s in symset){
-							var original = actionTable[nextState][symset[s]];
-							if(original !== undefined)
-							{
-								//trace("replacing "+original+" with "+"r"+newRule.getRuleNumber());
-							}
-							if(actionTable[nextState][symset[s]]!= undefined){
-								trace("OVERWRITING A SHIFT RUEL!!:!");
-								trace("state "+next+", symbol "+symset[s]+",  original rule "+actionTable[nextState][symset[s]]);
-								trace("replacing with "+"r"+newRule.getRuleNumber());
-								terminate = true;
-								return;
-							}
-							actionTable[nextState][symset[s]] = "r"+newRule.getRuleNumber();
-						}
-						actionTable[nextState]["$"] = "r"+newRule.getRuleNumber();
-
-					}
-					else actionTable[nextState]["$"] = "acc";
-				}
+				writeRule(grammar, newRule, next);
 				states[stateMap[lastID][symb]].add(newRule);
 				queue.push(states[stateMap[lastID][symb]]);
 				queue.push(stateMap[lastID][symb]);
@@ -246,6 +198,38 @@ package Language.Builder {
 			//if(original !== undefined && original != "s"+stateMap[lastID][symb])
 				//trace("replacing "+original+" with "+"s"+stateMap[lastID][symb]);
 			actionTable[lastID][symb] = "s"+stateMap[lastID][symb];
+		}
+
+		private function writeRule(grammar:Grammar, newRule:Rule, next:int)
+		{
+			if(newRule.complete())
+			{
+				//trace("STATE "+next+" ACCEPTS "+symb+" to complete rule: "+newRule.getAnnotatedForm()+" number "+newRule.getRuleNumber());
+				//EVERY ACTION MUST RESULT IN A REDUCE!
+				var symset = grammar.getSymbolSet();
+				//THE END!!
+				if(newRule.getRuleNumber() != 0)
+				{
+					for(var s in symset)
+					{
+						var originalValue = actionTable[next][symset[s]];
+						if(originalValue !== undefined)
+						{
+							//trace("replacing "+original+" with "+"r"+newRule.getRuleNumber());
+						}
+						if(actionTable[next][symset[s]]!= undefined){
+							trace("OVERWRITING A SHIFT RUEL!!:!");
+							trace("state "+next+", symbol "+symset[s]+",  original rule "+actionTable[next][symset[s]]);
+							trace("replacing with "+"r"+newRule.getRuleNumber());
+							terminate = true;
+							return;
+						}
+						actionTable[next][symset[s]] = "r"+newRule.getRuleNumber();
+					}
+					actionTable[next]["$"] = "r"+newRule.getRuleNumber();
+				}
+				else actionTable[next]["$"] = "acc";
+			}
 		}
 
 		private function nextID():int {
