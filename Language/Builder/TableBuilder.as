@@ -189,7 +189,7 @@ package Language.Builder {
 				//trace(states[stateMap[lastID][symb]].contains(newRule));
 				ruleStateMap[newRule.getAnnotatedForm()] = stateMap[lastID][symb];
 				var nextState = stateMap[lastID][symb];
-				writeRule(grammar, newRule, next);
+				writeRule(grammar, newRule, nextState);
 				states[stateMap[lastID][symb]].add(newRule);
 				queue.push(states[stateMap[lastID][symb]]);
 				queue.push(stateMap[lastID][symb]);
