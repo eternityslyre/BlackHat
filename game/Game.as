@@ -26,7 +26,7 @@ package Game
 		private var screenHeight:Number;
 		private var consolePercentage = 0;
 		/* Console constants */
-		private var CONSOLE_MOVE_SPEED:Number = 1.5/100;
+		private var CONSOLE_MOVE_SPEED:Number = 6/100;
 
 		/* FPS data */
 		private var FPSTextField;
@@ -63,11 +63,14 @@ package Game
 			FPSTextField.background = true;
 			addChild(FPSTextField);
 
-			initWorld();
+			initWorld(stage);
 		}
 
-		public function initWorld()
+		public function initWorld(stage:Stage)
 		{
+			var player = new Player(stage, 100,100,0,0);
+			world.addExposed(player);
+			player.setConsoleCallback(loadConsole);
 			for(var i = 0; i < 1; i++)
 			{
 				trace("create ball "+i);
@@ -75,7 +78,7 @@ package Game
 				world.addProtected(ball2);
 				var ball3 = new Ball(50+200/10*i,10+350/10*i, Math.random()*10, Math.random()*10);
 				world.addExposed(ball3);
-				ball3.setConsoleCallback(loadConsole)
+				ball3.setConsoleCallback(loadConsole);
 				trace("end create ball "+i);
 			}
 			
