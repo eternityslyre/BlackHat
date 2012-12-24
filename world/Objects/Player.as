@@ -20,10 +20,11 @@ package World.Objects
 		public var yVelocity;
 		public var ground;
 		public var gravity:Number= 2;
+		public var xSpeed = 3;
 
 		public function Player(stage:Stage, xPos:int, yPos:int, xVel:Number= 0, yVel:Number= 0)
 		{
-			trace("IM A BALL!!!!");
+			super("gravity = 5#s25#s;\nxSpeed = #5s3#5s;");
 			x = xPos;
 			y = yPos;
 			xVelocity = xVel;
@@ -76,13 +77,12 @@ package World.Objects
 
 		public override function updateProgrammable(tick:Number)
 		{
-			x+= xVelocity;
-			y+= yVelocity;
-			if(y < 0) y = 0;
+			physics.updateState(this);
+			boundary.updateState(this);
 			if(leftdown)
-				x-=10;
+				x-=xSpeed;
 			if(rightdown)
-				x+=10;
+				x+=xSpeed;
 			if(updown && ground)
 			{
 				ground = false;
@@ -91,15 +91,10 @@ package World.Objects
 			if(downdown)
 				xVelocity *= 0.5;
 				trace("Down");
-			if(yVelocity < 15)
-			yVelocity += gravity*tick;
 			if(y + height > 400)
 			{
-				yVelocity = 0;
-				y = 400 - height;
 				ground = true;
 			}
-			if(x + width > 550 || x < 0) xVelocity*=-1;
 		}
 
 	}

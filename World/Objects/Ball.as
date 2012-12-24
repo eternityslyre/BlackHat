@@ -12,9 +12,12 @@ package World.Objects
 	{
 		public var xVelocity;
 		public var yVelocity;
+		private var testString2 = "0#mif(xVelocity < 10)\n{\n    xVelocity = xVelocity + 1;\n}0#m"+
+			"\ntrace(\"15#sHello World!!15#s\" + xVelocity);\n0#mif ( x > 500 ) { xVelocity = 0 - 20; } 0#m";
 
 		public function Ball(xPos:int, yPos:int, xVel:int = 0, yVel:int = 0)
 		{
+			super(testString2);
 			trace("IM A BALL!!!!");
 			x = xPos;
 			y = yPos;

@@ -93,6 +93,7 @@ package Game
 			console.y = stage.height/2 - console.height/2;
 			target = p;
 			drawDistance = 0;
+			console.loadText(p.code);
 		}
 
 		private function addListeners(stage:Stage)

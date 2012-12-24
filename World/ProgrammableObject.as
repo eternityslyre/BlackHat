@@ -15,10 +15,12 @@ package World
 		private var executionTree:ExecutionNode;
 		private var code:String;
 		private var loadConsole:Function;
+		public var code:String;
 
 		/* Constructor to pull out all properties available for call and edit */
 		public function ProgrammableObject(txt:String = null)
 		{
+			code = txt;
 			addEventListener(MouseEvent.ROLL_OVER, rolledOver);
 		}
 
