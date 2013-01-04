@@ -9,6 +9,7 @@ package World.Objects
 	import flash.events.*;
 	import flash.events.*;
 	import World.*;
+	import Game.Behaviors.*
 
 	public class Player extends ProgrammableObject
 	{
@@ -21,10 +22,12 @@ package World.Objects
 		public var ground;
 		public var gravity:Number= 2;
 		public var xSpeed = 3;
+		public var physics:PhysicsBehavior;
+		public var boundary:BoundaryBehavior;
 
 		public function Player(stage:Stage, xPos:int, yPos:int, xVel:Number= 0, yVel:Number= 0)
 		{
-			super("gravity = 5#s25#s;\nxSpeed = #5s3#5s;");
+			super("gravity = #5s5#5s;\nxSpeed = #5s3#5s;");
 			x = xPos;
 			y = yPos;
 			xVelocity = xVel;
@@ -32,6 +35,8 @@ package World.Objects
 			stage.addEventListener(KeyboardEvent.KEY_DOWN, keyPressed);
 			stage.addEventListener(KeyboardEvent.KEY_UP, keyReleased);
 			ground = false;
+			physics = new PhysicsBehavior();
+			boundary = new BoundaryBehavior();
 		}
 
 		public function keyPressed(e:KeyboardEvent)
@@ -77,12 +82,14 @@ package World.Objects
 
 		public override function updateProgrammable(tick:Number)
 		{
-			physics.updateState(this);
-			boundary.updateState(this);
 			if(leftdown)
-				x-=xSpeed;
+				xVelocity-=xSpeed;
 			if(rightdown)
-				x+=xSpeed;
+				xVelocity+=xSpeed;
+			if(y + height >= 400)
+			{
+				ground = true;
+			}
 			if(updown && ground)
 			{
 				ground = false;
@@ -90,11 +97,8 @@ package World.Objects
 			}
 			if(downdown)
 				xVelocity *= 0.5;
-				trace("Down");
-			if(y + height > 400)
-			{
-				ground = true;
-			}
+			physics.updateState(this, tick);
+			boundary.updateState(this);
 		}
 
 	}

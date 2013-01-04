@@ -5,13 +5,15 @@
 *****************************************************************/
 package Game.Behaviors 
 {
-	class PhysicsBehavior 
+	import World.Objects.*;
+	public class PhysicsBehavior 
 	{
-		public function updateState(obj:ProgrammableObject)
+		public var gravity = 0.2;
+		public function updateState(obj:Player, tick:Number)
 		{
 			obj.x+= obj.xVelocity;
 			obj.y+= obj.yVelocity;
-			if(yVelocity < 15)
+			if(obj.yVelocity < 15)
 				obj.yVelocity += gravity*tick;
 		}
 	}

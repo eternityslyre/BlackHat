@@ -1,4 +1,4 @@
-/**********************************************************************
+﻿/**********************************************************************
 * The main class, which runs everything. It also
 * listens for key events while the consoles 
 * aren't available.
@@ -93,7 +93,7 @@ package Game
 			console.y = stage.height/2 - console.height/2;
 			target = p;
 			drawDistance = 0;
-			console.loadText(p.code);
+			console.loadText(p.codeString);
 		}
 
 		private function addListeners(stage:Stage)

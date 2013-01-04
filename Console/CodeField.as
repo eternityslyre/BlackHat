@@ -158,20 +158,23 @@ package Console
 
 		public function loadText(s:String)
 		{
-			displayField.text = s.replace(/\d+#\w/g,"");
+			displayField.text = s.replace(/#\d+[sm]/g,"");
 			var soFar = 0;
-			var marks = s.match(/\d+#\w/g)
-			var parts = s.split(/\d+#\w/);
+			var marks = s.match(/#\d+[sm]/g)
+			var parts = s.split(/#\d+[sm]/);
 			for ( var i = 0; i < parts.length; i++)
 			{
 				trace("line is : "+parts[i]);
+				trace("mark is : "+marks[i]);
 				if(i%2==1)
 				{
-					var maxLength = int(marks[i].substring(0, marks[i].indexOf('#')));
+					var maxLength = int(marks[i].substring(1, marks[i].length-1));
+					trace("length is "+maxLength);
 					var field = new InputField(displayField, (i-1)/2, soFar, soFar+parts[i].length, propagate, maxLength);
 					field.type = TextFieldType.INPUT;
 					field.defaultTextFormat = DEFAULT_FORMAT;
 					field.multiline = marks[i].charAt(marks[i].length-1) == 'm';
+					trace(marks[i].charAt(marks[i].length-1));
 					field.wordWrap = field.multiline;
 					field.textColor = 0xff0000;
 					field.text = parts[i];

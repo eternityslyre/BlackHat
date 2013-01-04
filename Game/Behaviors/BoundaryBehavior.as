@@ -5,7 +5,8 @@
 *****************************************************************/
 package Game.Behaviors 
 {
-	class BoundaryBehavior 
+	import World.*;
+	public class BoundaryBehavior 
 	{
 		public function updateState(obj:ProgrammableObject)
 		{

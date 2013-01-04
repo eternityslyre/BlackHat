@@ -134,6 +134,7 @@ package Console
 			if(maxLength > 0 && text.length > maxLength)
 				return;
 			displayField.replaceText(startIndex, endIndex, event.target.text);
+			realign();
 			updateCallback(id, startIndex+event.target.text.length - endIndex);
 			endIndex = startIndex+event.target.text.length; 
 		}

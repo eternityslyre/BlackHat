@@ -1,4 +1,4 @@
-/***********************************************************************
+﻿/***********************************************************************
 * This class defines the basics of any object which has in-game code  
 * components. Most notably, it provides an override for 
 * OnEnterFrame, which calls Animate and Execute.
@@ -15,12 +15,12 @@ package World
 		private var executionTree:ExecutionNode;
 		private var code:String;
 		private var loadConsole:Function;
-		public var code:String;
+		public var codeString:String;
 
 		/* Constructor to pull out all properties available for call and edit */
 		public function ProgrammableObject(txt:String = null)
 		{
-			code = txt;
+			codeString = txt;
 			addEventListener(MouseEvent.ROLL_OVER, rolledOver);
 		}
 

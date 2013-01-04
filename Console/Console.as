@@ -47,6 +47,11 @@ package Console {
 			cycleWindow.defaultTextFormat = getConsoleTextFormat();
 			addChild(cycleWindow);
 		}
+		
+		public function loadText(codeString:String)
+		{
+			text.loadText(codeString);
+		}
 
 		private function getConsoleTextFormat()
 		{
