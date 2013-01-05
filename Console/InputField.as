@@ -50,11 +50,32 @@ package Console
 			addEventListener(FocusEvent.KEY_FOCUS_CHANGE, TextKeyFocusChange);
 		}
 
+		public function reload(fullText:TextField, index:int, start:int, end:int, callback:Function, max = -1)
+		{
+			startIndex = start;
+			endIndex = end;
+			displayField = fullText;
+			updateCallback = callback;
+			id = index;
+			line = displayField.getLineIndexOfChar(startIndex);
+			maxLength = max;
+			text = displayField.text.substring(startIndex, endIndex);
+			realign();
+			red = 0;
+			green = 0xdd;
+			blue = 0;
+			endRed = 0xff;
+			endGreen = 0xff;
+			endBlue = 0xff;
+		}
+
 		public function realign()
 		{
 			var line = displayField.getLineIndexOfChar(startIndex);
+			if(line < 0) return;
 			var endLine = displayField.getLineIndexOfChar(endIndex-1);
-			trace("Line found:" +line);
+			var numLines = endLine - line;
+			trace("Line of "+startIndex+" found:" +line);
 			var xStart = displayField.getCharBoundaries(startIndex);
 			var xEnd = displayField.getCharBoundaries(endIndex-1);
 			//Handle empty lines, only possible for multiline situations.
@@ -131,10 +152,12 @@ package Console
 
 		private function textEdited(event:Event)
 		{
+			scrollV = 1;
 			if(maxLength > 0 && text.length > maxLength)
 				return;
 			displayField.replaceText(startIndex, endIndex, event.target.text);
-			realign();
+			if(text.length > 0)
+				realign();
 			updateCallback(id, startIndex+event.target.text.length - endIndex);
 			endIndex = startIndex+event.target.text.length; 
 		}

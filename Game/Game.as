@@ -87,6 +87,8 @@ package Game
 		public function loadConsole(p:ProgrammableObject)
 		{
 			if(!showConsole || target == p) return;
+			if(target != null)
+				writeChanges();
 			console.visible = false;
 			console.attachScope(p);
 			console.x = stage.width/2 - console.width/2;
@@ -94,6 +96,11 @@ package Game
 			target = p;
 			drawDistance = 0;
 			console.loadText(p.codeString);
+		}
+
+		private function writeChanges()
+		{
+			target.codeString = console.getCodeString();
 		}
 
 		private function addListeners(stage:Stage)
@@ -135,6 +142,10 @@ package Game
 					console.visible = false;
 					drawTransition();
 				}
+				else if(consolePercentage == 1)
+				{
+					writeChanges();
+				}
 				else 
 				{
 					world.resume();
@@ -146,12 +157,12 @@ package Game
 
 		private function drawTransition()
 		{
-				var startx = 0;
-				var endx = stage.width;
-				var endy = stage.height*consolePercentage;
-				var starty = endy;
-				drawGradient(startx, starty - 100, endx, endy);
-				drawLine(5, 0xffffff, 1, startx, starty, endx, endy);
+			var startx = 0;
+			var endx = stage.width;
+			var endy = stage.height*consolePercentage;
+			var starty = endy;
+			drawGradient(startx, starty - 100, endx, endy);
+			drawLine(5, 0xffffff, 1, startx, starty, endx, endy);
 		}
 		public function drawGradient(startX:Number, startY:Number, endX:Number, endY:Number)
 		{

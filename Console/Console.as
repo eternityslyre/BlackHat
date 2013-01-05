@@ -27,7 +27,6 @@ package Console {
 			parser = backend;
 			backend.setOutput(printOutput);
 			text = new CodeField(x, y, width, height);
-			text.loadText(testString);
 
 			addChild(text);
 
@@ -51,6 +50,11 @@ package Console {
 		public function loadText(codeString:String)
 		{
 			text.loadText(codeString);
+		}
+
+		public function getCodeString():String
+		{
+			return text.getCodeString();
 		}
 
 		private function getConsoleTextFormat()

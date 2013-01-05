@@ -158,6 +158,13 @@ package Console
 
 		public function loadText(s:String)
 		{
+			text = s;
+			for(var inputField in inputFields)
+			{
+				inputFields[inputField].visible = false;
+			}
+			trace("loading ["+s+"]");
+			displayField.text = "";
 			displayField.text = s.replace(/#\d+[sm]/g,"");
 			var soFar = 0;
 			var marks = s.match(/#\d+[sm]/g)
@@ -170,7 +177,14 @@ package Console
 				{
 					var maxLength = int(marks[i].substring(1, marks[i].length-1));
 					trace("length is "+maxLength);
-					var field = new InputField(displayField, (i-1)/2, soFar, soFar+parts[i].length, propagate, maxLength);
+					if(inputFields[(i-1)/2] == null)
+					{
+						inputFields[(i-1)/2] = new InputField(displayField, (i-1)/2, soFar, soFar+parts[i].length, propagate, maxLength);
+						addChild(inputFields[(i-1)/2]);
+					}
+					var field = inputFields[(i-1)/2];
+					field.reload(displayField, (i-1)/2, soFar, soFar+parts[i].length, propagate, maxLength);
+					field.visible = true;
 					field.type = TextFieldType.INPUT;
 					field.defaultTextFormat = DEFAULT_FORMAT;
 					field.multiline = marks[i].charAt(marks[i].length-1) == 'm';
@@ -178,8 +192,7 @@ package Console
 					field.wordWrap = field.multiline;
 					field.textColor = 0xff0000;
 					field.text = parts[i];
-					inputFields.push(field);
-					addChild(field);
+					field.realign();
 				}
 				soFar += parts[i].length;
 
@@ -190,6 +203,25 @@ package Console
 		public function getText()
 		{
 			return displayField.text;
+		}
+
+		public function getCodeString():String
+		{
+			var output = "";
+			var parts = text.split(/#\d+[sm]/);
+			var marks = text.match(/#\d+[sm]/g)
+			var append = "";
+			for(var i = 0; i < parts.length; i++)
+			{
+				append = parts[i];
+				if(i%2==1)
+				{
+					append = marks[i]+inputFields[(i-1)/2].text+marks[i];
+				}
+				output+=append;
+			}
+			trace("regenerated code is: ["+output+"]");
+			return output;
 		}
 
 		public function highlight(s:String)
