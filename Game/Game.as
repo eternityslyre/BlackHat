@@ -71,6 +71,11 @@ package Game
 			var player = new Player(stage, 100,100,0,0);
 			world.addExposed(player);
 			player.setConsoleCallback(loadConsole);
+
+			var platform = new Platform(stage, player, 300,300,0,0);
+			world.addExposed(platform);
+			platform.setConsoleCallback(loadConsole);
+
 			for(var i = 0; i < 1; i++)
 			{
 				trace("create ball "+i);

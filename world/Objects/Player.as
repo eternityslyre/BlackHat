@@ -20,14 +20,14 @@ package World.Objects
 		public var xVelocity;
 		public var yVelocity;
 		public var ground;
-		public var gravity:Number= 2;
+		public var gravity:Number= 0.25;
 		public var xSpeed = 3;
 		public var physics:PhysicsBehavior;
 		public var boundary:BoundaryBehavior;
 
 		public function Player(stage:Stage, xPos:int, yPos:int, xVel:Number= 0, yVel:Number= 0)
 		{
-			super("gravity = #5s5#5s;\nxSpeed = #5s3#5s;");
+			super("gravity = #5s0.25#5s;\nxSpeed = #5s3#5s;");
 			x = xPos;
 			y = yPos;
 			xVelocity = xVel;
@@ -97,7 +97,11 @@ package World.Objects
 			}
 			if(downdown)
 				xVelocity *= 0.5;
-			physics.updateState(this, tick);
+			if(yVelocity < 10)
+				yVelocity += gravity;
+			x+=xVelocity;
+			y+=yVelocity;
+			//physics.updateState(this, tick);
 			boundary.updateState(this);
 		}
 
