@@ -13,6 +13,7 @@ package World.Objects
 
 	public class Player extends ProgrammableObject
 	{
+		public var MAX_X_SPEED:Number = 5;
 		private var leftdown:Boolean;
 		private var rightdown:Boolean;
 		private var updown:Boolean;
@@ -82,10 +83,11 @@ package World.Objects
 
 		public override function updateProgrammable(tick:Number)
 		{
-			if(leftdown)
-				xVelocity-=xSpeed;
-			if(rightdown)
-				xVelocity+=xSpeed;
+			xVelocity = 0;
+			if(leftdown && -xVelocity < MAX_X_SPEED)
+				xVelocity=-xSpeed;
+			if(rightdown && xVelocity < MAX_X_SPEED)
+				xVelocity=xSpeed;
 			if(y + height >= 400)
 			{
 				ground = true;

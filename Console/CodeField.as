@@ -163,7 +163,7 @@ package Console
 			{
 				inputFields[inputField].visible = false;
 			}
-			trace("loading ["+s+"]");
+			//trace("loading ["+s+"]");
 			displayField.text = "";
 			displayField.text = s.replace(/#\d+[sm]/g,"");
 			var soFar = 0;
@@ -171,12 +171,12 @@ package Console
 			var parts = s.split(/#\d+[sm]/);
 			for ( var i = 0; i < parts.length; i++)
 			{
-				trace("line is : "+parts[i]);
-				trace("mark is : "+marks[i]);
+				//trace("line is : "+parts[i]);
+				//trace("mark is : "+marks[i]);
 				if(i%2==1)
 				{
 					var maxLength = int(marks[i].substring(1, marks[i].length-1));
-					trace("length is "+maxLength);
+					//trace("length is "+maxLength);
 					if(inputFields[(i-1)/2] == null)
 					{
 						inputFields[(i-1)/2] = new InputField(displayField, (i-1)/2, soFar, soFar+parts[i].length, propagate, maxLength);
@@ -188,7 +188,7 @@ package Console
 					field.type = TextFieldType.INPUT;
 					field.defaultTextFormat = DEFAULT_FORMAT;
 					field.multiline = marks[i].charAt(marks[i].length-1) == 'm';
-					trace(marks[i].charAt(marks[i].length-1));
+					//trace(marks[i].charAt(marks[i].length-1));
 					field.wordWrap = field.multiline;
 					field.textColor = 0xff0000;
 					field.text = parts[i];
@@ -220,7 +220,7 @@ package Console
 				}
 				output+=append;
 			}
-			trace("regenerated code is: ["+output+"]");
+			//trace("regenerated code is: ["+output+"]");
 			return output;
 		}
 

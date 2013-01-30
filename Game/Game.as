@@ -41,6 +41,8 @@ package Game
 		private var gameSpeed:Number = WORLD_SPEED;
 		private var framesPerSecond = WORLD_FPS;
 
+		private var collisionHandler:CollisionHandler;
+
 		/* Hacking target */
 		private var target:ProgrammableObject;
 		private var drawDistance:Number = 0;
@@ -48,6 +50,7 @@ package Game
 		public function Game(stage:Stage, parse:Parser)
 		{
 			world = new World();
+			collisionHandler = new CollisionHandler();
 			addChild(world);
 			console = new Console(10,10,200,150,parse);
 			console.visible = false;
@@ -96,8 +99,8 @@ package Game
 				writeChanges();
 			console.visible = false;
 			console.attachScope(p);
-			console.x = stage.width/2 - console.width/2;
-			console.y = stage.height/2 - console.height/2;
+			//console.x = stage.width/2 - console.width/2;
+			//console.y = stage.height/2 - console.height/2;
 			target = p;
 			drawDistance = 0;
 			console.loadText(p.codeString);
@@ -128,7 +131,7 @@ package Game
 					drawToConsole();
 					if(drawDistance < 1)
 					{
-						drawDistance+=0.02;
+						drawDistance+=0.1;
 					}
 					else
 					{
@@ -193,13 +196,56 @@ package Game
 		public function drawToConsole()
 		{
 			//draw a line from the console to the object
-			graphics.lineStyle(5, 0x00dd00, 1);
+			graphics.lineStyle(2, 0x00dd00, 1, false, LineScaleMode.NORMAL, CapsStyle.NONE);
 			var startx = target.x+target.width/2;
 			var starty = target.y+target.height/2;
-			var endx = console.x + console.width/2;
-			var endy = console.y + console.height/2;
+			var endx = console.x;//+ console.width;
+			var endy = console.y;// + console.height;
+			graphics.drawEllipse(endx,endy,2,2);
+			
+			var deltax = endx - startx;
+			var deltay = endy - starty;
+			var SEGMENT_LENGTH = 15;
+			var BLANK_LENGTH = 10;
+			var repeat = SEGMENT_LENGTH+BLANK_LENGTH;
+			var fullDistance = Math.sqrt(deltax*deltax +deltay*deltay);
+			var distance = drawDistance*fullDistance;
+			var repeats = distance/repeat;
+			var extra = drawDistance;
+			var xComponent = deltax/fullDistance;
+			var yComponent = deltay/fullDistance;
+			var peats = int(repeats);
+
+			/*
+			graphics.lineStyle(3, 0x0000dd, 1, false, LineScaleMode.NORMAL, CapsStyle.NONE);
 			graphics.moveTo(startx, starty);
-			graphics.lineTo((endx-startx)*drawDistance + startx, (endy-starty)*drawDistance + starty);
+			graphics.lineTo(startx + distance*xComponent, starty + distance*yComponent);
+			*/
+			
+			graphics.lineStyle(2, 0x00dd00, 1, false, LineScaleMode.NORMAL, CapsStyle.NONE);
+
+			for(var i = 0; i < peats; i++)
+			{
+				var fraction = i/repeats;
+				var startingx = startx+distance*xComponent*fraction+BLANK_LENGTH*xComponent;
+				var startingy = starty+distance*yComponent*fraction+BLANK_LENGTH*yComponent;
+				graphics.moveTo(startingx, startingy);
+				//graphics.moveTo(startx, starty);
+				graphics.lineTo(startingx + SEGMENT_LENGTH*xComponent, SEGMENT_LENGTH*yComponent + startingy);
+				//graphics.lineTo(10*i,0);
+			}
+			trace("Distance: "+distance);
+			var remainder = distance/repeat - peats;
+			//peats+=0.05
+			if(distance > repeat*peats + BLANK_LENGTH)
+			{
+				trace("remainder: "+remainder);
+				trace("draw remainder: "+remainder*distance);
+				trace("compare to: "+BLANK_LENGTH);
+				graphics.moveTo(startx + (BLANK_LENGTH+repeat*peats)*xComponent, 
+					starty + (BLANK_LENGTH+repeat*peats)*yComponent);
+				graphics.lineTo(startx + distance*xComponent, starty + distance*yComponent);
+			}
 		}
 
 		public function onEnterFrame(e:Event)
@@ -230,6 +276,7 @@ package Game
 					if(!showConsole)
 					{
 						showConsole = true;
+						world.pause();
 						gameSpeed = CONSOLE_VISIBLE_GAME_SPEED;
 						framesPerSecond = CONSOLE_VISIBLE_GAME_FPS;
 					}

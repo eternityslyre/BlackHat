@@ -53,7 +53,7 @@ package World
 						];
 		
 		private var ticks = 0;
-		private var glowFilter = new GlowFilter(0xffffff,0,0,0);
+		private var glowFilter = new GlowFilter(0xffffff,0,0,0,2);
 
 		public function World()
 		{
@@ -116,6 +116,11 @@ package World
 			}
 		}
 
+		public function pause()
+		{
+			showCurtain();
+		}
+
 		public function resume()
 		{
 			protectedObjects.visible = true;
@@ -140,10 +145,8 @@ package World
 			curtain.y = y;
 			curtain.width = width;
 			curtain.height = height;
-			showCurtain();
 			drawObjects();
 			drawFilters();
-
 		}
 
 		private function drawFilters()

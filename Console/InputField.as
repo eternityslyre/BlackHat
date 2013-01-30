@@ -30,6 +30,8 @@ package Console
 		private var id:int;
 		public function InputField(fullText:TextField, index:int, start:int, end:int, callback:Function, max = -1)
 		{
+			//background = true;
+			//backgroundColor = 0x4f4f4f;
 			startIndex = start;
 			endIndex = end;
 			displayField = fullText;
@@ -74,8 +76,8 @@ package Console
 			var line = displayField.getLineIndexOfChar(startIndex);
 			if(line < 0) return;
 			var endLine = displayField.getLineIndexOfChar(endIndex-1);
-			var numLines = endLine - line;
-			trace("Line of "+startIndex+" found:" +line);
+			var numLines = Math.max(endLine - line,1);
+			//trace("Line of "+startIndex+" found:" +line);
 			var xStart = displayField.getCharBoundaries(startIndex);
 			var xEnd = displayField.getCharBoundaries(endIndex-1);
 			//Handle empty lines, only possible for multiline situations.
@@ -83,7 +85,7 @@ package Console
 			{
 				xEnd = new Rectangle(x, y, width, height);
 			}
-			trace("coords found: (" +xStart+","+xEnd+")");
+			//trace("coords found: (" +xStart+","+xEnd+")");
 			var newWidth = xEnd.x + xEnd.width - xStart.x;
 			var metrics = displayField.getLineMetrics(line);
 			x = displayField.x + xStart.x - 2;
@@ -96,8 +98,9 @@ package Console
 										+text.substring(endIndex, endIndex+1)+"]");
 			trace("correct height is "+(metrics.height*(endLine-line+1)+4));
 			var newHeight = (metrics.height*(endLine-line+1)+4);
-			height = newHeight; */
-			height = metrics.height*(1+numLines)+4;
+			//height = newHeight; 
+			*/
+			//height = metrics.height*(numLines)+4;
 		}
 
 		private function lengthCheck(e:TextEvent)

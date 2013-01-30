@@ -25,6 +25,7 @@ package World.Objects
 		public var boundary:BoundaryBehavior;
 		private var player:Player;
 		private var xOld;
+		private var yOld;
 
 		public function Platform(stage:Stage, p:Player, xPos:int, yPos:int, xVel:Number= 0, yVel:Number= 0)
 		{
@@ -37,24 +38,28 @@ package World.Objects
 			ground = false;
 			boundary = new BoundaryBehavior();
 			xOld = x;
-
+			yOld = y;
 		}
 
 		public override function updateProgrammable(tick:Number)
 		{
+			boundary.updateState(this);
 			var deltaX = x-xOld;
+			var deltaY = y-yOld;
 			if(player.x+player.width/2>x && player.x+player.width/2 <x+width)
 			{
 				if(player.y + player.height >y && player.y < y && player.yVelocity >0)
 				{
+					player.ground = true;
 					player.y = y - player.height;
 					player.x += deltaX;
-					player.yVelocity = 0;//Math.min(0,player.yVelocity);
+					player.yVelocity = Math.max(0,deltaY);
 				}
 			}
 			//physics.updateState(this, tick);
 			boundary.updateState(this);
 			xOld = x;
+			yOld = y;
 		}
 
 	}
