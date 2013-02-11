@@ -1,3 +1,13 @@
+/********************************************************************************
+* This class will be my collision detection and handling system.
+* All objects should be in one of three classes:
+* 1. Immobile: everything else gets pushed back, it doesn't move.
+* 2. Rails: it stops against walls, but moves everything else.
+*     Against other rails objects they become stuck.
+* 3. Mobile: against railes or immobile it is pushed back. Against
+*    other Mobile objects they resolve the collision (bouncing off each other)
+*    or otherwise.
+******************************************************************************/
 package Game
 {
 	import World.*;
