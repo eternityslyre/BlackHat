@@ -24,6 +24,8 @@ package World
 
 		private var objects:Array;
 
+		private var collisionHandler:CollisionHandler;
+
 		// The canvas we draw to for blur effects
 		private var backgroundData:BitmapData;
 		// The buffer for the background
@@ -63,6 +65,7 @@ package World
 			protectedObjects = new MovieClip();
 			protectedObjects.visible = false;
 			exposedObjects = new MovieClip();
+			collisionHandler = new CollisionHandler();
 
 			addChild(protectedObjects);
 			blurArray = new Array();
@@ -96,12 +99,10 @@ package World
 
 		public function pulsate()
 		{
-			return;
 			var pulseValue = (1-Math.sin(colorIndex))/2*8;
 			glowArray[0].alpha = pulseValue;
 			glowArray[0].blurX = pulseValue*2;
 			glowArray[0].blurY = pulseValue*2;
-			exposedObjects.filters = glowArray;
 			colorIndex += 0.05;
 		}
 
@@ -114,6 +115,7 @@ package World
 			{
 				objects[clip].update(tick);
 			}
+			collisionHandler.handleCollisions();
 		}
 
 		public function pause()
@@ -146,16 +148,12 @@ package World
 			curtain.width = width;
 			curtain.height = height;
 			drawObjects();
+			pulsate();
 			drawFilters();
 		}
 
 		private function drawFilters()
 		{
-			var pulseValue = (1-Math.cos(colorIndex))/2*8;
-			glowArray[0].alpha = pulseValue;
-			glowArray[0].blurX = pulseValue*2;
-			glowArray[0].blurY = pulseValue*2;
-			colorIndex += 0.05;
 			backgroundData.applyFilter(backgroundData, curtain, origin, blurArray[0]);
 			backgroundData.applyFilter(backgroundData, curtain, origin, blurArray[1]);
 			backgroundBuffer.applyFilter(backgroundBuffer, curtain, origin, glowArray[0]);

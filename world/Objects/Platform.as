@@ -16,11 +16,10 @@ package World.Objects
 	{
 		public var xStart = 20;
 		public var xEnd = 400;
-		public var xVelocity;
-		public var yVelocity;
-		public var ground;
 		public var gravity:Number= 2;
 		public var xSpeed = 3;
+		public var xVelocity;
+		public var yVelocity;
 		public var physics:PhysicsBehavior;
 		public var boundary:BoundaryBehavior;
 		private var player:Player;
@@ -35,7 +34,6 @@ package World.Objects
 			y = yPos;
 			xVelocity = xVel;
 			yVelocity = yVel;
-			ground = false;
 			boundary = new BoundaryBehavior();
 			xOld = x;
 			yOld = y;
