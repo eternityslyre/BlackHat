@@ -46,6 +46,7 @@ package Game
 		/* Hacking target */
 		private var target:ProgrammableObject;
 		private var drawDistance:Number = 0;
+		private var colorIndex = 0;
 
 		public function Game(stage:Stage, parse:Parser)
 		{
@@ -131,7 +132,7 @@ package Game
 					drawToConsole();
 					if(drawDistance < 1)
 					{
-						drawDistance+=0.1;
+						drawDistance+=0.02;
 					}
 					else
 					{
@@ -140,6 +141,9 @@ package Game
 							
 				}
 				drawTransition();
+				console.pulsate(colorIndex);
+				world.pulsate(colorIndex);
+				colorIndex+=0.05;
 			}
 
 			if(!showConsole)
@@ -234,14 +238,10 @@ package Game
 				graphics.lineTo(startingx + SEGMENT_LENGTH*xComponent, SEGMENT_LENGTH*yComponent + startingy);
 				//graphics.lineTo(10*i,0);
 			}
-			trace("Distance: "+distance);
 			var remainder = distance/repeat - peats;
 			//peats+=0.05
 			if(distance > repeat*peats + BLANK_LENGTH)
 			{
-				trace("remainder: "+remainder);
-				trace("draw remainder: "+remainder*distance);
-				trace("compare to: "+BLANK_LENGTH);
 				graphics.moveTo(startx + (BLANK_LENGTH+repeat*peats)*xComponent, 
 					starty + (BLANK_LENGTH+repeat*peats)*yComponent);
 				graphics.lineTo(startx + distance*xComponent, starty + distance*yComponent);

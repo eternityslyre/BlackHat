@@ -107,7 +107,7 @@ package Game
 			}
 		}
 
-		private function lineInterescts(origin:int, intercept:int, scalar:int, boundary:int, slope:Number, range:int):Boolean
+		private function lineIntersects(origin:int, intercept:int, scalar:int, boundary:int, slope:Number, range:int):Boolean
 		{
 			var projectedCoord = slope*(scalar - origin) + intercept;	
 			return (projectedCoord > boundary && projectedCoord < boundary + range);
@@ -116,19 +116,19 @@ package Game
 		private function intersectTrajectory(x:int, y:int, xVel:Number, yVel:Number, 
 								xbound:int, ybound:int, widthbound:int, heightbound:int)
 		{
-			var leftIntersection = yVel/xVel(xbound - x) + y;
-			if (leftIntersection > yBound && leftIntersection > yBound + heightbound)
+			var leftIntersection = yVel/xVel*(xbound - x) + y;
+			if (leftIntersection > ybound && leftIntersection > ybound + heightbound)
 			{
 			}
-			var rightIntersection = yVel/xVel(xbound - x - widthbound) + y;
-			if (rightIntersection > yBound && rightIntersection > yBound + heightbound)
+			var rightIntersection = yVel/xVel*(xbound - x - widthbound) + y;
+			if (rightIntersection > ybound && rightIntersection > ybound + heightbound)
 			{
 			}
-			var topIntersection = xVel/yVel(ybound - y) + x;
+			var topIntersection = xVel/yVel*(ybound - y) + x;
 			if (topIntersection > xbound && topIntersection < xbound + widthbound)
 			{
 			}
-			var bottomIntersection = xVel/yVel(ybound - y - heightbound) + x;
+			var bottomIntersection = xVel/yVel*(ybound - y - heightbound) + x;
 			if (bottomIntersection > xbound && topIntersection < xbound + widthbound)
 			{
 			}

@@ -55,9 +55,9 @@ package Console
 			addChild(displayField);
 		}
 
-		private function pulse(event:Event)
+		public function pulsate(colorIndex:Number)
 		{
-			var pulseValue = (1-Math.cos(colorIndex))/2;
+			var pulseValue = (1-Math.sin(colorIndex))/2;
 			filterArray[0].alpha = pulseValue;
 			filterArray[0].blurX = pulseValue*2;
 			filterArray[0].blurY = pulseValue*2;
@@ -197,7 +197,7 @@ package Console
 				soFar += parts[i].length;
 
 			}
-			addEventListener(Event.ENTER_FRAME, pulse);
+			//addEventListener(Event.ENTER_FRAME, pulse);
 		}
 
 		public function getText()

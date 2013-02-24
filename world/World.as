@@ -97,7 +97,7 @@ package World
 			objects.push(p);
 		}
 
-		public function pulsate()
+		public function pulsate(colorIndex:Number)
 		{
 			var pulseValue = (1-Math.sin(colorIndex))/2*8;
 			glowArray[0].alpha = pulseValue;
@@ -148,7 +148,7 @@ package World
 			curtain.width = width;
 			curtain.height = height;
 			drawObjects();
-			pulsate();
+			//pulsate();
 			drawFilters();
 		}
 

@@ -57,6 +57,11 @@ package Console {
 			return text.getCodeString();
 		}
 
+		public function pulsate(colorIndex:Number)
+		{
+			text.pulsate(colorIndex);
+		}
+
 		private function getConsoleTextFormat()
 		{
 			if(defaultFormat == null)
