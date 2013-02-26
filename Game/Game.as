@@ -26,7 +26,7 @@ package Game
 		private var screenHeight:Number;
 		private var consolePercentage = 0;
 		/* Console constants */
-		private var CONSOLE_MOVE_SPEED:Number = 6/100;
+		private var CONSOLE_MOVE_SPEED:Number = 2/100;
 
 		/* FPS data */
 		private var FPSTextField;
@@ -120,6 +120,7 @@ package Game
 
 		public function handleConsole()
 		{
+			colorIndex+=0.05;
 			graphics.clear();
 			if(showConsole) 
 			{
@@ -143,7 +144,6 @@ package Game
 				drawTransition();
 				console.pulsate(colorIndex);
 				world.pulsate(colorIndex);
-				colorIndex+=0.05;
 			}
 
 			if(!showConsole)

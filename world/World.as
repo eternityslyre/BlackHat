@@ -99,7 +99,7 @@ package World
 
 		public function pulsate(colorIndex:Number)
 		{
-			var pulseValue = (1-Math.sin(colorIndex))/2*8;
+			var pulseValue = (1-Math.cos(colorIndex))/2*8;
 			glowArray[0].alpha = pulseValue;
 			glowArray[0].blurX = pulseValue*2;
 			glowArray[0].blurY = pulseValue*2;
