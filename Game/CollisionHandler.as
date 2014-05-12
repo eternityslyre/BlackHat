@@ -33,9 +33,11 @@ package Game
 				{
 					if(intersects(objects[i],objects[j]))
 					{
+						trace(objects[i] + " and " + objects[j] + " are intersecting.");
 						objects[i].handleCollision(objects[j]);
 						objects[j].handleCollision(objects[i]);
 						resolveCollision(objects[i], objects[j]);
+
 					}
 				}
 			}
@@ -68,48 +70,50 @@ package Game
 				b = a;
 				a = temp;
 			}
-			//greater pushes lesser back
+			//lesser pushes greater back
 			//determine angle of intersect.
-			var adjustedVelx = a.xVelocity - b.xVelocity;
-			var adjustedVely = a.yVelocity - b.yVelocity;
+			// y = mx + b
+			
+			var adjustedVelx = b.xVelocity - a.xVelocity;
+			var adjustedVely = b.yVelocity - a.yVelocity;
 			var slope = adjustedVely/adjustedVelx;
-			var leftIntersect = lineIntersects(a.x, a.y, b.x, b.y, slope, b.height);
-			var rightIntersect = lineIntersects(a.x, a.y, b.x + b.width, b.y, slope, b.height);
-			var topIntersect = lineIntersects(a.x, a.y, b.x, b.y, 1/slope, b.width);
-			var bottomIntersect = lineIntersects(a.x, a.y, b.x, b.y + b.height, 1/slope, b.width);
+			var leftIntersect = lineIntersects(b.y, b.x, a.y, slope, a.height);
+			var rightIntersect = lineIntersects(b.y, b.x + b.width, a.y, slope, b.height);
+			var topIntersect = lineIntersects(b.x, b.y, a.y, 1/slope, b.width);
+			var bottomIntersect = lineIntersects(b.x, b.y, a.y + a.height, 1/slope, b.width);
 
 			if(leftIntersect)
 			{
-				var newx = b.x - a.width;
-				a.y = a.yVelocity/a.xVelocity*(newx - a.x);
-				a.x = newx;
+				var newx = a.x - b.width;
+				b.y = a.yVelocity/a.xVelocity*(newx - a.x);
+				b.x = newx;
 			}
 
 			if(rightIntersect)
 			{
-				var newx = b.x + b.width;
-				a.y = a.yVelocity/a.xVelocity*(newx - a.x);
-				a.x = newx;
+				var newx = a.x + a.width;
+				b.y = a.yVelocity/a.xVelocity*(newx - a.x);
+				b.x = newx;
 			}
 
 			if(topIntersect)
 			{
 				var newy = b.y - a.height;
-				a.x = a.xVelocity/a.yVelocity*(newy - a.y);
-				a.y = newy;
+				b.x = a.xVelocity/a.yVelocity*(newy - a.y);
+				b.y = newy;
 			}
 
 			if(bottomIntersect)
 			{
 				var newy = b.y + b.height;
-				a.x = a.xVelocity/a.yVelocity*(newy - a.y);
-				a.y = newy;
+				b.x = a.xVelocity/a.yVelocity*(newy - a.y);
+				b.y = newy;
 			}
 		}
 
-		private function lineIntersects(origin:int, intercept:int, scalar:int, boundary:int, slope:Number, range:int):Boolean
+		private function lineIntersects(intercept:int, scalar:int, boundary:int, slope:Number, range:int):Boolean
 		{
-			var projectedCoord = slope*(scalar - origin) + intercept;	
+			var projectedCoord = slope*scalar + intercept;	
 			return (projectedCoord > boundary && projectedCoord < boundary + range);
 		}
 

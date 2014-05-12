@@ -12,14 +12,12 @@ package World.Objects
 	import World.Objects.*;
 	import Game.Behaviors.*
 
-	public class Platform extends ProgrammableObject
+	public class Platform extends MovingObject
 	{
 		public var xStart = 20;
 		public var xEnd = 400;
 		public var gravity:Number= 2;
 		public var xSpeed = 3;
-		public var xVelocity;
-		public var yVelocity;
 		public var physics:PhysicsBehavior;
 		public var boundary:BoundaryBehavior;
 		private var player:Player;
@@ -28,7 +26,7 @@ package World.Objects
 
 		public function Platform(stage:Stage, p:Player, xPos:int, yPos:int, xVel:Number= 0, yVel:Number= 0)
 		{
-			super("#30mx = x + 2;#30m");
+			super(ON_RAILS_OBJECT,"#30mx = x + 2;#30m");
 			player = p;
 			x = xPos;
 			y = yPos;
@@ -44,6 +42,7 @@ package World.Objects
 			boundary.updateState(this);
 			var deltaX = x-xOld;
 			var deltaY = y-yOld;
+			/*
 			if(player.x+player.width/2>x && player.x+player.width/2 <x+width)
 			{
 				if(player.y + player.height >y && player.y < y && player.yVelocity >0)
@@ -54,6 +53,7 @@ package World.Objects
 					player.yVelocity = Math.max(0,deltaY);
 				}
 			}
+			*/
 			//physics.updateState(this, tick);
 			boundary.updateState(this);
 			xOld = x;

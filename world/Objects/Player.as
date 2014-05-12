@@ -11,15 +11,13 @@ package World.Objects
 	import World.*;
 	import Game.Behaviors.*
 
-	public class Player extends ProgrammableObject
+	public class Player extends MovingObject 
 	{
 		public var MAX_X_SPEED:Number = 5;
 		private var leftdown:Boolean;
 		private var rightdown:Boolean;
 		private var updown:Boolean;
 		private var downdown:Boolean;
-		public var xVelocity;
-		public var yVelocity;
 		public var ground;
 		public var gravity:Number= 0.25;
 		public var xSpeed = 3;
@@ -28,7 +26,7 @@ package World.Objects
 
 		public function Player(stage:Stage, xPos:int, yPos:int, xVel:Number= 0, yVel:Number= 0)
 		{
-			super("gravity = #5s0.25#5s;\nxSpeed = #5s3#5s;");
+			super(FREE_OBJECT,"gravity = #5s0.25#5s;\nxSpeed = #5s3#5s;");
 			x = xPos;
 			y = yPos;
 			xVelocity = xVel;

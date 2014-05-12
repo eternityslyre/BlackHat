@@ -74,10 +74,12 @@ package Game
 		{
 			var player = new Player(stage, 100,100,0,0);
 			world.addExposed(player);
+			world.registerMovingObject(player);
 			player.setConsoleCallback(loadConsole);
 
 			var platform = new Platform(stage, player, 300,300,0,0);
 			world.addExposed(platform);
+			world.registerMovingObject(platform);
 			platform.setConsoleCallback(loadConsole);
 
 			for(var i = 0; i < 1; i++)
@@ -85,8 +87,10 @@ package Game
 				trace("create ball "+i);
 				var ball2 = new Ball(50+200/10*i,10+350/10*i, Math.random()*10, Math.random()*10);
 				world.addProtected(ball2);
+				world.registerMovingObject(ball2);
 				var ball3 = new Ball(50+200/10*i,10+350/10*i, Math.random()*10, Math.random()*10);
 				world.addExposed(ball3);
+				world.registerMovingObject(ball3);
 				ball3.setConsoleCallback(loadConsole);
 				trace("end create ball "+i);
 			}

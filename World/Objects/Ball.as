@@ -8,16 +8,14 @@ package World.Objects
 	import flash.events.*;
 	import World.*;
 
-	public class Ball extends ProgrammableObject
+	public class Ball extends MovingObject
 	{
-		public var xVelocity;
-		public var yVelocity;
 		private var testString2 = "#0mif(xVelocity < 10)\n{\n    xVelocity = xVelocity + 1;\n}#0m"+
 			"\ntrace(\"#15sHello World!!#15s\" + xVelocity);\n#0mif ( x > 500 ) { xVelocity = 0 - 20; } #0m";
 
 		public function Ball(xPos:int, yPos:int, xVel:int = 0, yVel:int = 0)
 		{
-			super(testString2);
+			super(FREE_OBJECT,testString2);
 			trace("IM A BALL!!!!");
 			x = xPos;
 			y = yPos;

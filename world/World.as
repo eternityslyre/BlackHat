@@ -91,6 +91,11 @@ package World
 			objects.push(a);
 		}
 
+		public function registerMovingObject(m:MovingObject)
+		{
+			collisionHandler.registerObject(m);
+		}
+
 		public function addExposed(p:ProgrammableObject)
 		{
 			exposedObjects.addChild(p);

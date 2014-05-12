@@ -18,10 +18,10 @@ package World
 		public var mobility = 0;
 
 		/* Constructor to pull out all properties available for call and edit */
-		public function ProgrammableObject(txt:String = null)
+		public function MovingObject(mob:int, txt:String = null)
 		{
-			codeString = txt;
-			addEventListener(MouseEvent.ROLL_OVER, rolledOver);
+			super(txt);
+			mobility = mob;
 		}
 
 		public function handleCollision(b:MovingObject)
