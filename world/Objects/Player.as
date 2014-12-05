@@ -20,7 +20,7 @@ package World.Objects
 		private var downdown:Boolean;
 		public var ground;
 		public var gravity:Number= 0.25;
-		public var xSpeed = 3;
+		public var xSpeed = 6;
 		public var physics:PhysicsBehavior;
 		public var boundary:BoundaryBehavior;
 
@@ -36,6 +36,13 @@ package World.Objects
 			ground = false;
 			physics = new PhysicsBehavior();
 			boundary = new BoundaryBehavior();
+			mobility = 2;
+		}
+
+		public override function handleCollision(b:MovingObject)
+		{
+			if(b.mobility < mobility)
+				ground = true;
 		}
 
 		public function keyPressed(e:KeyboardEvent)
@@ -85,7 +92,7 @@ package World.Objects
 			if(leftdown && -xVelocity < MAX_X_SPEED)
 				xVelocity=-xSpeed;
 			if(rightdown && xVelocity < MAX_X_SPEED)
-				xVelocity=xSpeed;
+				xVelocity=+xSpeed;
 			if(y + height >= 400)
 			{
 				ground = true;

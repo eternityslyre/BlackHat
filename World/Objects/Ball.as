@@ -1,4 +1,4 @@
-/*****************************************************************
+﻿/*****************************************************************
 * This class represents a simple cirular object, ie. a ball.
 *****************************************************************/
 
@@ -21,6 +21,55 @@ package World.Objects
 			y = yPos;
 			xVelocity = xVel;
 			yVelocity = yVel;
+			mobility = 2;
+		}
+
+		public override function handleCollision(b:MovingObject)
+		{
+			
+			if(b.mobility <= mobility)
+			{
+				var a = b;
+				b = this;
+				//lesser pushes greater back
+				//determine angle of intersect.
+				// y = mx + b
+				// x = y/m - b/m
+				
+				var adjustedVelx = b.xVelocity - a.xVelocity;
+				var adjustedVely = b.yVelocity - a.yVelocity;
+				if(adjustedVelx == 0 && adjustedVely == 0)
+					return;
+				var slope = adjustedVely/adjustedVelx;
+				var leftIntersect = (adjustedVelx > 0) && 
+						lineIntersects(b.y, b.height, a.x - b.x - b.width, a.y, slope, a.height);
+				var rightIntersect = (adjustedVelx < 0) && 
+						lineIntersects(b.y, b.height, a.x + a.width - b.x, a.y, slope, a.height);
+				var topIntersect = (adjustedVely > 0) && 
+						lineIntersects(b.x, b.width, a.y - b.y - b.height, a.x, 1/slope, a.width);
+				var bottomIntersect = (adjustedVely < 0) &&
+						lineIntersects(b.x, b.width, a.y + a.height - b.y, a.x, 1/slope, a.width);
+
+				if(leftIntersect)
+				{
+					xVelocity = -xVelocity;
+				}
+
+				if(rightIntersect)
+				{
+					xVelocity = -xVelocity;
+				}
+
+				if(topIntersect)
+				{
+					yVelocity = -yVelocity;
+				}
+
+				if(bottomIntersect)
+				{
+					yVelocity = -yVelocity;
+				}
+			}
 		}
 
 		public override function updateProgrammable(tick:Number)
@@ -31,5 +80,13 @@ package World.Objects
 			if(y + height > 400 || y < 0) yVelocity*=-1;
 		}
 
+		private function lineIntersects(intercept:Number, interceptRange:Number, 
+										scalar:Number, boundary:Number, slope:Number, range:int):Boolean
+		{
+					var projectedCoord = slope*scalar + intercept;
+					return (projectedCoord > boundary && projectedCoord < boundary + range)||
+							(projectedCoord + interceptRange > boundary && projectedCoord +interceptRange < boundary + range)||
+							(projectedCoord < boundary && projectedCoord + interceptRange > boundary + range);
+		}
 	}
 }

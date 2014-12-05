@@ -91,15 +91,15 @@ package World
 			objects.push(a);
 		}
 
-		public function registerMovingObject(m:MovingObject)
-		{
-			collisionHandler.registerObject(m);
-		}
-
 		public function addExposed(p:ProgrammableObject)
 		{
 			exposedObjects.addChild(p);
 			objects.push(p);
+		}
+
+		public function registerMovingObject(o:MovingObject)
+		{
+			collisionHandler.registerObject(o);
 		}
 
 		public function pulsate(colorIndex:Number)

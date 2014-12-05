@@ -1,4 +1,4 @@
-/*******************************************************************************
+﻿/*******************************************************************************
 *
 *	Instantiation Node: Handles class lookups and calls "new".
 *	All execution nodes must implement:
@@ -22,11 +22,24 @@ package Language.Execution {
 
 	public class InstantiationNode extends ExecutionNode {
 		private var children:Array;
+		// New functionality: A constructor dictionary that can attempt to call any constructores
+		// available.
+		private static var constructors:Object;
 
 		public function InstantiationNode(lhs, args)
 		{
 			super(lhs,args);
 			children = args;
+			if(constructors == null)
+				initConstructors();
+		}
+
+		private function initConstructors()
+		{
+			constructors =  
+			{
+				"Array": function() { return new Array();}
+			}
 		}
 
 		public override function run():Object

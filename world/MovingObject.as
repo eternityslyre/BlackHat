@@ -34,5 +34,10 @@ package World
 			updateProgrammable(tick);
 			execute();
 		}
+
+		public function coordinateString():String
+		{
+			return "("+x+","+y+")";
+		}
 	}
 }

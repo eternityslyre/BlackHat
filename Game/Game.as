@@ -85,10 +85,10 @@ package Game
 			for(var i = 0; i < 1; i++)
 			{
 				trace("create ball "+i);
-				var ball2 = new Ball(50+200/10*i,10+350/10*i, Math.random()*10, Math.random()*10);
+				var ball2 = new Ball(50+200/10*i,10+350/10*i, 5 + Math.random()*10,  5+ Math.random()*10);
 				world.addProtected(ball2);
 				world.registerMovingObject(ball2);
-				var ball3 = new Ball(50+200/10*i,10+350/10*i, Math.random()*10, Math.random()*10);
+				var ball3 = new Ball(50+200/10*i,10+350/10*i, 2 + Math.random()*10,  6 +Math.random()*10);
 				world.addExposed(ball3);
 				world.registerMovingObject(ball3);
 				ball3.setConsoleCallback(loadConsole);

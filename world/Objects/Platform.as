@@ -35,10 +35,13 @@ package World.Objects
 			boundary = new BoundaryBehavior();
 			xOld = x;
 			yOld = y;
+			mobility = 1;
 		}
 
 		public override function updateProgrammable(tick:Number)
 		{
+			xOld = x;
+			yOld = y;
 			boundary.updateState(this);
 			var deltaX = x-xOld;
 			var deltaY = y-yOld;
@@ -56,10 +59,19 @@ package World.Objects
 			*/
 			//physics.updateState(this, tick);
 			boundary.updateState(this);
-			xOld = x;
-			yOld = y;
+		}
+
+		public override function handleCollision(b:MovingObject)
+		{
+			if(b.mobility > mobility)
+			{
+				b.x += x - xOld;
+				b.y += y - yOld;
+			}
+
 		}
 
 	}
+
 }
 
